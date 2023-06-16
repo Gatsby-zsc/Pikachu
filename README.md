@@ -1,4 +1,4 @@
-# Create T3 App
+# Pikachu
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
@@ -13,6 +13,59 @@ If you are not familiar with the different technologies used in this project, pl
 - [Prisma](https://prisma.io)
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
+
+## How to begin with the project
+
+1. run `npm install`
+
+2. Please make a copy of `.env.example` and rename it as `.env`.
+
+   Then make sure all the fields are filled, such as database url (please read the guidelines below for database installation)
+
+3. run `npm run dev` to begin
+
+### Database Install
+
+For mac, refer to https://wiki.postgresql.org/wiki/Homebrew
+
+### Git
+
+#### 1.1 Git commit message standard
+
+You should follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+
+If you're using VS Code, there's a [good extension](https://marketplace.visualstudio.com/items?itemName=vivaxy.vscode-conventional-commits).
+
+#### 1.2 How to contribute
+
+1. Create a new branch from `main` branch:
+
+   ```bash
+   git switch -c feature/add-new-component
+   ```
+
+   for example, your branch is for a new feature, then `feature/new-feature`
+
+   for a bug fix, then `fix/fix-a-bug`
+
+2. When you're ready to push the branch, you can first `pull` and `rebase` all the updates from the `main` branch:
+
+   ```bash
+   git switch main
+   git pull origin main
+   git switch feature/add-new-component
+   git rebase main
+   ```
+
+3. If there's any conflict, resolve it.
+
+4. Now push your new branch and create a pull request.
+
+#### 1.3 Git GUI recommendation
+
+https://git-fork.com/
+
+no need to pay
 
 ## Learn More
 
