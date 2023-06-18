@@ -2,12 +2,6 @@
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
-## What's next? How do I make an app with this?
-
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
-
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
-
 - [Next.js](https://nextjs.org)
 - [NextAuth.js](https://next-auth.js.org)
 - [Prisma](https://prisma.io)
@@ -36,6 +30,17 @@ You should follow the [Conventional Commits](https://www.conventionalcommits.org
 
 If you're using VS Code, there's a [good extension](https://marketplace.visualstudio.com/items?itemName=vivaxy.vscode-conventional-commits).
 
+Common scenes:
+
+```
+chore: update diary
+feat: add login page
+fix: fix login router
+docs: update README.md
+build: modify Dockerfile
+...
+```
+
 #### 1.2 How to contribute
 
 1. Create a new branch from `main` branch:
@@ -44,9 +49,11 @@ If you're using VS Code, there's a [good extension](https://marketplace.visualst
    git switch -c feature/add-new-component
    ```
 
-   for example, your branch is for a new feature, then `feature/new-feature`
+   for a new feature such as login page, then `feature/add-login-page`
 
-   for a bug fix, then `fix/fix-a-bug`
+   for a bug fix, then `fix/fix-a-bug`,
+
+   for update your diary, then `chore/update-diary`
 
 2. When you're ready to push the branch, you can first `pull` and `rebase` all the updates from the `main` branch:
 
@@ -60,6 +67,8 @@ If you're using VS Code, there's a [good extension](https://marketplace.visualst
 3. If there's any conflict, resolve it.
 
 4. Now push your new branch and create a pull request.
+
+5. Request a review and wait for the maintainer to review and merge the pull request.
 
 #### 1.3 Git GUI recommendation
 
@@ -75,7 +84,3 @@ To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the fo
 - [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
 
 You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
