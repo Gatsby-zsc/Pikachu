@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { MainNav } from "@/components/main-nav";
 import { useRouter } from "next/router";
+import { UserAccountNav } from "../user-account-nav";
 
 import { type LandingPageConfig } from "@/types";
 
@@ -36,18 +37,24 @@ const Layout = ({ children }: MarketingLayoutProps) => {
         <div className="flex h-20 items-center justify-between py-6">
           <MainNav items={landingPageConfig.mainNav} />
           <nav>
-            <Button
-              variant="secondary"
-              size="sm"
-              className="px-4"
-              onClick={
-                sessionData
-                  ? () => void signOut()
-                  : () => void router.push("/login")
-              }
-            >
-              {sessionData ? "Sign out" : "Sign in"}
-            </Button>
+            {!sessionData ? (
+              <Button
+                variant="secondary"
+                size="sm"
+                className="px-4"
+                onClick={() => void router.push("/login")}
+              >
+                {"Sign in"}
+              </Button>
+            ) : (
+              <UserAccountNav
+                user={{
+                  name: sessionData.user.name,
+                  image: sessionData.user.image,
+                  email: sessionData.user.email,
+                }}
+              />
+            )}
           </nav>
         </div>
       </header>

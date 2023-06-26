@@ -1,3 +1,5 @@
+import { type Icons } from "@/components/icons";
+
 export type SiteConfig = {
   name: string;
   description: string;
@@ -30,4 +32,9 @@ export type SidebarNavItem = {
 
 export type LandingPageConfig = {
   mainNav: MainNavItem[];
+};
+
+export type DashboardConfig = {
+  mainNav: MainNavItem[];
+  sidebarNav: SidebarNavItem[];
 };
