@@ -54,6 +54,8 @@ const FormSchema = z.object({
 });
 
 export const CreateEventForm = () => {
+  const createEvent = api.eventRouter.create.useMutation();
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -81,9 +83,16 @@ export const CreateEventForm = () => {
     );
 
     const newData = {
-      ...data,
-      eventStartComb,
-      eventEndComb,
+      title: data.eventTitle,
+      description: data.eventBrief,
+      type: data.eventType,
+      venue: "default location",
+      startTime: eventStartComb,
+      endTime: eventEndComb,
+      capacity: 10,
+      price: data.ticketPrice,
+      eventStatus: false,
+      seatType: data.ticketType,
     };
 
     toast({
@@ -95,6 +104,8 @@ export const CreateEventForm = () => {
       ),
     });
     console.log(newData);
+
+    createEvent.mutate(newData);
   }
 
   return (

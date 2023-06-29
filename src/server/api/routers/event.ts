@@ -1,12 +1,11 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 
-export const createEventRouter = createTRPCRouter({
-  create: publicProcedure
+export const eventRouter = createTRPCRouter({
+  create: protectedProcedure
     // input/output validation, to be done later
     .input(
       z.object({
-        createdUser: z.string(),
         title: z.string(),
         description: z.string(),
         type: z.string(),
@@ -23,7 +22,7 @@ export const createEventRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const event = await ctx.prisma.event.create({
         data: {
-          createdUser: input.createdUser,
+          createdUser: ctx.session.user.id,
           title: input.title,
           discription: input.description,
           type: input.type,
