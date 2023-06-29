@@ -31,9 +31,13 @@ export const dashboardConfig: DashboardConfig = {
 
 interface DashboardLayoutProps {
   children?: React.ReactNode;
+  withSidebar?: boolean;
 }
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+export default function DashboardLayout({
+  children,
+  withSidebar = true,
+}: DashboardLayoutProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -62,14 +66,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           />
         </div>
       </header>
-      <div className="container grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
-        <aside className="hidden w-[200px] flex-col md:flex">
-          <DashboardNav items={dashboardConfig.sidebarNav} />
-        </aside>
-        <main className="flex w-full flex-1 flex-col overflow-hidden">
-          {children}
-        </main>
-      </div>
+      {withSidebar ? (
+        <div className="container grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
+          <aside className="hidden w-[200px] flex-col md:flex">
+            <DashboardNav items={dashboardConfig.sidebarNav} />
+          </aside>
+          <main className="flex w-full flex-1 flex-col overflow-hidden">
+            {children}
+          </main>
+        </div>
+      ) : (
+        <main className="container mx-auto">{children}</main>
+      )}
       {/* <SiteFooter className="border-t" /> */}
     </div>
   );

@@ -148,7 +148,7 @@ export const CreateEventForm = () => {
         />
 
         {/* Event Type & Category */}
-        <div className="grid grid-flow-col justify-stretch gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="eventType"
@@ -207,7 +207,7 @@ export const CreateEventForm = () => {
         </div>
 
         {/* Event Start Date & Time */}
-        <div className="grid grid-flow-col justify-stretch gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="eventStartDate"
@@ -278,7 +278,7 @@ export const CreateEventForm = () => {
         </div>
 
         {/* Event End Date & Time */}
-        <div className="grid grid-flow-col justify-stretch gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="eventEndDate"
@@ -349,7 +349,7 @@ export const CreateEventForm = () => {
         </div>
 
         {/* Event Tickets */}
-        <div className="grid grid-flow-col justify-stretch gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="ticketType"
