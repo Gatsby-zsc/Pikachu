@@ -1,4 +1,14 @@
 week 1
+Discussed and created user stories with other members, decide to implement project using T3 stack, a full-stack development framework
+
 week 2
+Designed database schemas according to reference website and user story. Modified user story after discussing with other members
+
 week 3
+Finished chapter 2 of project proposal document, getting familiar with typescript and backend framework (nextjs/nextauth)
+
 week 4
+Discussed and modified database design with other members, getting familiar with backend framework(trpc/prisma)
+
+week 5
+Implemented backend api for sprint 1 according to user story and database, getting familiar with frontend framework(tailwindcss/shadcn)
