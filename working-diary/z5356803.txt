@@ -1,0 +1,19 @@
+Week 1
+
+Decided the project topic with other members.The main functions and technology stacks of the web application were discussed together.
+Learn how to use the T3 stack tech stack.
+
+Week 2
+
+Assigned the proposal tasks with other members. Communicated with other members to decide the user stories of 
+the project. According to the user stories, analyse the entities and attributes in the user stories. Draw the ER diagram
+for our backend development.
+
+Week 3
+
+Finished the proposal together and submitted it. Discussed the details of the project features 
+and development documentation with other members. Make familiar with the prisma ORM, revise our ER diagram in the proposal.
+
+Week 4
+
+According to the ER diagram, use prisma to create our database.
