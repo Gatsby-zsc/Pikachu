@@ -1,5 +1,3 @@
-import DashboardLayout from "@/components/dashboard/layout";
-import { type ReactElement } from "react";
 import { useForm } from "react-hook-form";
 import { Calendar } from "@/components/ui/calendar";
 import React from "react";
@@ -24,8 +22,13 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import ButtonGroup from "@/components/button-group";
 
-const Dashboard = () => {
+interface CreateEventButtonProps {
+  onCreate: () => void;
+}
+
+const CreateEventButton: React.FC<CreateEventButtonProps> = () => {
   const {
     register,
     handleSubmit,
@@ -193,7 +196,9 @@ const Dashboard = () => {
         Help people in the area discover your event and let attendees know where
         to show up.
       </p>
-
+      <div>
+        <ButtonGroup />
+      </div>
       <hr className="my-12" />
       <h1 className="mb-2 text-left text-4xl font-bold">Date and Time</h1>
       <p className="mb-8 text-2xl">
@@ -408,8 +413,4 @@ const Dashboard = () => {
   );
 };
 
-Dashboard.getLayout = function getLayout(page: ReactElement) {
-  return <DashboardLayout>{page}</DashboardLayout>;
-};
-
-export default Dashboard;
+export default CreateEventButton;
