@@ -15,6 +15,14 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+model Example {
+    id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@map(name: "example")
+}
+
 // Necessary for Next auth
 model Account {
     id                String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
