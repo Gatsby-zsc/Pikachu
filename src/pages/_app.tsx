@@ -7,6 +7,8 @@ import type { NextPage } from "next";
 
 import { api } from "@/utils/api";
 
+import { Toaster } from "@/components/ui/toaster";
+
 import "@/styles/globals.css";
 
 const fontSans = FontSans({
@@ -47,6 +49,7 @@ const MyApp = ({
       <SessionProvider session={session}>
         {getLayout(<Component {...pageProps} />)}
       </SessionProvider>
+      <Toaster />
     </>
   );
 };

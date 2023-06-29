@@ -1,5 +1,6 @@
 import DashboardLayout from "@/components/dashboard/layout";
 import { type ReactElement } from "react";
+import { CreateEventForm } from "@/components/create-event/create-event-form";
 import React from "react";
 
 const Dashboard = () => {
@@ -9,6 +10,8 @@ const Dashboard = () => {
       <p className="mb-8 text-center text-lg text-gray-500">
         Welcome to your dashboard!
       </p>
+
+      <CreateEventForm />
     </div>
   );
 };

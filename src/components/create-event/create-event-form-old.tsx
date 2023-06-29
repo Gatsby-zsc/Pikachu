@@ -23,12 +23,15 @@ import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import ButtonGroup from "@/components/button-group";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-interface CreateEventButtonProps {
-  onCreate: () => void;
-}
+const formSchema = z.object({
+  eventTitle: z.string().nonempty({ message: "This field is required" }),
+  eventBrief: z.string().nonempty({ message: "This field is required" }),
+});
 
-const CreateEventButton: React.FC<CreateEventButtonProps> = () => {
+const CreateEventForm = () => {
   const {
     register,
     handleSubmit,
@@ -37,7 +40,7 @@ const CreateEventButton: React.FC<CreateEventButtonProps> = () => {
   } = useForm({
     defaultValues: {
       eventTitle: "",
-      organiser: "",
+      eventBrief: "",
       eventType: "",
       eventCategory: "",
       eventTags: "",
@@ -50,7 +53,6 @@ const CreateEventButton: React.FC<CreateEventButtonProps> = () => {
       eventTimeZone: "",
       ticketName: "",
       ticketNumber: "",
-      eventLanguage: "",
     },
   });
 
@@ -60,17 +62,7 @@ const CreateEventButton: React.FC<CreateEventButtonProps> = () => {
   const [endDate, setEndDate] = React.useState<Date | undefined>(new Date());
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="mb-4 text-3xl font-bold">Dashboard</h1>
-      <p className="mb-8 text-center text-lg text-gray-500">
-        Welcome to your dashboard!
-      </p>
-
-      <h1 className="mb-2 text-left text-4xl font-bold">Basic information</h1>
-      <p className="mb-8 text-2xl">
-        Name your event and tell event-goers why they should come. Add details
-        that highlight what makes it unique.
-      </p>
+    <>
       <div className="mb-6">
         <label htmlFor="eventTitle" className="mb-2 block font-medium">
           Event Title <span className="text-red-500">*</span>
@@ -92,11 +84,11 @@ const CreateEventButton: React.FC<CreateEventButtonProps> = () => {
         </label>
         <Textarea
           id="event"
-          {...register("organiser", { required: true })}
+          {...register("eventBrief", { required: true })}
           className="w-full rounded-md border p-2"
           placeholder="Description for the event"
         />
-        {errors.organiser && (
+        {errors.eventBrief && (
           <p className="text-red-500">This field is required</p>
         )}
       </div>
@@ -409,8 +401,8 @@ const CreateEventButton: React.FC<CreateEventButtonProps> = () => {
       <div className="mt-8 text-right">
         <Button>Create Now</Button>
       </div>
-    </div>
+    </>
   );
 };
 
-export default CreateEventButton;
+export default CreateEventForm;
