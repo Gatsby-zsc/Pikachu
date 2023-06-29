@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { type User } from "next-auth";
 import { signOut } from "next-auth/react";
+import { Plus, LayoutDashboard, Settings } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -43,10 +44,22 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/dashboard">Dashboard</Link>
+          <Link href="/dashboard/event/create">
+            <Plus className="mr-2 w-5" />
+            Create Event
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/dashboard/settings">Settings</Link>
+          <Link href="/dashboard">
+            <LayoutDashboard className="mr-2 w-5" />
+            Dashboard
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/dashboard">
+            <Settings className="mr-2 w-5" />
+            Settings
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
