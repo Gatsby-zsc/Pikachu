@@ -32,6 +32,7 @@ import { cn } from "@/utils/style-utils";
 import { toast } from "@/components/ui/use-toast";
 import { eventTypes, eventTime, eventCategories } from "@/config/create-event";
 import { combineDateAndTimeString } from "@/utils/date";
+import { api } from "@/utils/api";
 
 const FormSchema = z.object({
   eventTitle: z.string().min(2, {
@@ -226,9 +227,7 @@ export const CreateEventForm = () => {
                       mode="single"
                       selected={field.value}
                       onDayClick={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date("1900-01-01")
-                      }
+                      disabled={(date) => date < new Date()}
                       initialFocus
                     />
                   </PopoverContent>
@@ -299,9 +298,7 @@ export const CreateEventForm = () => {
                       mode="single"
                       selected={field.value}
                       onDayClick={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date("1900-01-01")
-                      }
+                      disabled={(date) => date < new Date()}
                       initialFocus
                     />
                   </PopoverContent>
