@@ -371,7 +371,14 @@ export const CreateEventForm = () => {
               <FormItem>
                 <FormLabel>Ticket Price</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input
+                    type="number"
+                    ref={field.ref}
+                    value={field.value}
+                    onChange={(event) => {
+                      field.onChange(+event.target.value);
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
