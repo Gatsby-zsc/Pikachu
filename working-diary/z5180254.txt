@@ -1,0 +1,15 @@
+Week 1 
+
+Did research work for projects choosing. Disscused project topics, project functionaties and technology stack with other group members. 
+
+Week 2
+
+Assigned Proposal tasks with other team members. Writed part of user stories. Disscussed user stories correction with group members.
+
+Week 3
+
+Drew all interface and flow diagrams for the projects. Completed proposal assignmnet writing with team members.
+
+Week4 
+
+Drew the phototype for the group on Figma. Studied with typescript and project framework(Next.js) 
