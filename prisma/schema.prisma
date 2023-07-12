@@ -95,11 +95,13 @@ model Event {
     endTime             DateTime             @map("end_time")
     capacity            Int
     price               Float
+    isDraft             Boolean              @default(true) @map("is_draft")
     user                User                 @relation(fields: [createdUser], references: [id])
-    eventStatus         Boolean              @map("event_status")
+    eventStatus         Int                  @default(0) @map("event_status")
     userFavouriteEvents UserFavouriteEvent[]
     tickets             Ticket[]
     reviews             Review[]
+    isOnline            Boolean              @default(false) @map("is_online")
 
     @@map(name: "event")
 }
@@ -175,13 +177,14 @@ model OrderTicket {
 }
 
 model Ticket {
-    id              Int           @id @default(autoincrement())
-    eventId         String        @map("event_id") @db.Uuid
-    event           Event         @relation(fields: [eventId], references: [id])
-    seatType        String        @map("seat_type")
-    price           Float
-    numberOfTickets Int           @map("number_of_tickets")
-    orderTickets    OrderTicket[]
+    id                Int           @id @default(autoincrement())
+    eventId           String        @map("event_id") @db.Uuid
+    event             Event         @relation(fields: [eventId], references: [id])
+    ticketName        String        @map("ticket_name")
+    ticketDescription String        @map("ticket_description")
+    price             Float
+    numberOfTickets   Int           @map("number_of_tickets")
+    orderTickets      OrderTicket[]
 
     @@map(name: "ticket")
 }
