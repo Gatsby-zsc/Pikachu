@@ -12,7 +12,7 @@ const Dashboard = () => {
     <div className="container mx-auto flex flex-col">
       <Link
         href="/dashboard"
-        className={cn(buttonVariants({ variant: "ghost" }), "mb-5 mr-auto")}
+        className={cn(buttonVariants({ variant: "ghost" }), "mb-8 mr-auto")}
       >
         <>
           <MoveLeft className="mr-2 h-4 w-4" />

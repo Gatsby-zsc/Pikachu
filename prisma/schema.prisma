@@ -93,8 +93,6 @@ model Event {
     venue               String
     startTime           DateTime             @map("start_time")
     endTime             DateTime             @map("end_time")
-    capacity            Int
-    price               Float
     isDraft             Boolean              @default(true) @map("is_draft")
     user                User                 @relation(fields: [createdUser], references: [id])
     eventStatus         Int                  @default(0) @map("event_status")

@@ -1,5 +1,12 @@
 import { type LucideProps, type Icon as LucideIcon } from "lucide-react";
-import { Ticket, ArrowRight } from "lucide-react";
+import {
+  Ticket,
+  ArrowRight,
+  ClipboardList,
+  CalendarClock,
+  MapPin,
+  Tags,
+} from "lucide-react";
 
 export type Icon = LucideIcon;
 
@@ -26,4 +33,8 @@ export const Icons = {
   ),
   ticket: Ticket,
   arrowRight: ArrowRight,
+  clipboardList: ClipboardList,
+  calendarClock: CalendarClock,
+  mapPin: MapPin,
+  tags: Tags,
 };

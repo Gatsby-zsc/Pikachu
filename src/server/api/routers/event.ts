@@ -12,31 +12,36 @@ export const eventRouter = createTRPCRouter({
         venue: z.string(),
         startTime: z.date(),
         endTime: z.date(),
-        capacity: z.number(),
-        price: z.number(),
-        eventStatus: z.boolean(),
-        seatType: z.string(),
+        eventStatus: z.number(),
+        tickets: z
+          .object({
+            ticketName: z.string(),
+            ticketDescription: z.string(),
+            price: z.number(),
+            quantity: z.number(),
+          })
+          .array(),
       })
     )
-    // .output(z.object())
     .mutation(async ({ input, ctx }) => {
       const event = await ctx.prisma.event.create({
         data: {
           createdUser: ctx.session.user.id,
           title: input.title,
-          discription: input.description,
+          description: input.description,
           type: input.type,
           venue: input.venue,
           startTime: input.startTime,
           endTime: input.endTime,
-          capacity: input.capacity,
-          price: input.price,
           eventStatus: input.eventStatus,
           tickets: {
-            create: {
-              seatType: input.seatType,
-              price: input.price,
-              numberOfTickets: input.capacity,
+            createMany: {
+              data: input.tickets.map((ticket) => ({
+                ticketName: ticket.ticketName,
+                ticketDescription: ticket.ticketDescription,
+                price: ticket.price,
+                numberOfTickets: ticket.quantity,
+              })),
             },
           },
         },
