@@ -101,6 +101,7 @@ export const CreateEventForm = () => {
       title: data.eventTitle,
       description: data.eventBrief,
       type: data.eventType,
+      category: data.eventCategory,
       venue: data.venue,
       startTime: eventStartComb,
       endTime: eventEndComb,

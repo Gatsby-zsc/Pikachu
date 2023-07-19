@@ -90,6 +90,7 @@ model Event {
     title               String
     description         String
     type                String
+    category            String
     venue               String
     startTime           DateTime             @map("start_time")
     endTime             DateTime             @map("end_time")
