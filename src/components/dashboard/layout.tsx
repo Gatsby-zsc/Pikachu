@@ -30,6 +30,11 @@ export const dashboardConfig: DashboardConfig = {
       href: "/dashboard/tickets",
       icon: "ticket",
     },
+    {
+      title: "ManageEvents",
+      href: "/dashboard/manage-events",
+      icon: "calendarClock",
+    },
   ],
 };
 

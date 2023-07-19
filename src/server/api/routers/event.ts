@@ -77,4 +77,72 @@ export const eventRouter = createTRPCRouter({
       });
       return event;
     }),
+  editEvent: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        title: z.string(),
+        description: z.string(),
+        type: z.string(),
+        category: z.string(),
+        venue: z.string(),
+        startTime: z.date(),
+        endTime: z.date(),
+        eventStatus: z.number(),
+        tickets: z
+          .object({
+            ticketName: z.string(),
+            ticketDescription: z.string(),
+            price: z.number(),
+            quantity: z.number(),
+          })
+          .array(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const event = await ctx.prisma.event.update({
+        where: { id: input.id },
+        data: {
+          title: input.title,
+          description: input.description,
+          type: input.type,
+          category: input.category,
+          venue: input.venue,
+          startTime: input.startTime,
+          endTime: input.endTime,
+          eventStatus: input.eventStatus,
+          tickets: {
+            updateMany: {
+              where: { eventId: input.id },
+              data: input.tickets.map((ticket) => ({
+                ticketName: ticket.ticketName,
+                ticketDescription: ticket.ticketDescription,
+                price: ticket.price,
+                numberOfTickets: ticket.quantity,
+              })),
+            },
+          },
+        },
+      });
+      console.log(event);
+    }),
+  publishEvent: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ input, ctx }) => {
+      const event = await ctx.prisma.event.update({
+        where: { id: input },
+        data: { isDraft: false }, // assuming 1 means published
+      });
+      console.log(event);
+    }),
+
+  deleteEvent: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ input, ctx }) => {
+      await ctx.prisma.event.deleteMany({
+        where: {
+          id: input,
+        },
+      });
+    }),
 });
