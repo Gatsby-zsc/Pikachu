@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 
 const EventDetailPage = () => {
   const router = useRouter();
-  let eventId = router.query.eventId;
+  let eventId = router.query.eventid;
   // console.log(eventId);
   if (Array.isArray(eventId)) {
     eventId = eventId[0];

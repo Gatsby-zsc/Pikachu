@@ -7,7 +7,8 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { HeartOff, Heart } from "lucide-react";
 import { useRouter } from "next/router";
-import { check } from "prettier";
+// import { enGb } from "data-fns/locale";
+import { format } from "date-fns";
 
 type EventCardType = {
   id: string;
@@ -26,15 +27,15 @@ type EventCardType = {
 interface EventCardProps {
   props: EventCardType;
 }
-// Wed Jul 19 2023 00:00:51
+
 function EventCard({ props }: EventCardProps) {
   const router = useRouter();
 
   const eventId = props.id;
   const { data: prices } = api.ticketRouter.prices.useQuery({ eventId });
 
-  const { data, status } = useSession();
-  // console.log(data);
+  const { status } = useSession();
+
   let favourite = false;
   if (status === "authenticated") {
     const { data: check } = api.favouriteRouter.check.useQuery({
@@ -45,10 +46,8 @@ function EventCard({ props }: EventCardProps) {
     }
   }
 
-  // const eventDate = new Date(props.startTime);
-  // console.log(eventDate.getMonth());
-  // console.log(eventDate.getDay());
-  // console.log(eventDate.getDate());
+  const startDate = new Date(props.startTime);
+  const date = format(startDate, "EEEE 'at' hh:mm a");
 
   const priceRange = [];
   if (prices) {
@@ -56,23 +55,31 @@ function EventCard({ props }: EventCardProps) {
       priceRange.push(eachPrice.price);
     }
   }
+
   const lowest = Math.min(...priceRange);
   const highest = Math.max(...priceRange);
 
-  const addFavourite = api.favouriteRouter.add.useMutation();
-  const deleteFavourite = api.favouriteRouter.delete.useMutation();
+  const ctx = api.useContext();
+
+  const addFavourite = api.favouriteRouter.add.useMutation({
+    onSuccess: () => {
+      void ctx.favouriteRouter.invalidate();
+    },
+  });
+  const deleteFavourite = api.favouriteRouter.delete.useMutation({
+    onSuccess: () => {
+      void ctx.favouriteRouter.invalidate();
+    },
+  });
   function addFavorite() {
     if (status !== "authenticated") {
       // ask user to login before favourite events
       void router.replace("/login");
     }
-    // console.log(check);
-    if (favourite) {
+    if (!favourite) {
       addFavourite.mutate({ eventId: eventId });
-      console.log("added to favirote");
     } else {
       deleteFavourite.mutate({ eventId: eventId });
-      console.log("deleted from favirote");
     }
   }
 
@@ -93,6 +100,7 @@ function EventCard({ props }: EventCardProps) {
         <Link href={`/all-events/${eventId}`}>
           <p className="font-heading text-2xl font-bold">{props.title}</p>
         </Link>
+        <p className="text-s2 pb-[3px] text-gray-600">{date}</p>
         <p className="text-s2 pb-[3px] text-gray-600">
           {props.isOnline ? "Online" : "In-place"}
         </p>

@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 
 const Dashboard = () => {
   const router = useRouter();
-  console.log(router);
+  // console.log(router);
   return (
     <div className="container mx-auto flex">
       {/* search bar to implement searching events by location */}

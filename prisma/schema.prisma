@@ -107,8 +107,8 @@ model Event {
 
 model UserFavouriteEvent {
     id      String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-    userId  String @unique @db.Uuid
-    eventId String @unique @db.Uuid
+    userId  String  @db.Uuid
+    eventId String  @db.Uuid
     user    User   @relation(fields: [userId], references: [id])
     event   Event  @relation(fields: [eventId], references: [id])
 

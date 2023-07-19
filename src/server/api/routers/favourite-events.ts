@@ -37,7 +37,7 @@ export const favouriteRouterRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      await ctx.prisma.userFavouriteEvent.delete({
+      await ctx.prisma.userFavouriteEvent.deleteMany({
         where: {
           userId: ctx.session.user.id,
           eventId: input.eventId,
