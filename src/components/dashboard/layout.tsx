@@ -11,6 +11,10 @@ import { useEffect } from "react";
 export const dashboardConfig: DashboardConfig = {
   mainNav: [
     {
+      title: "Events",
+      href: "/all-events",
+    },
+    {
       title: "Documentation",
       href: "/",
     },

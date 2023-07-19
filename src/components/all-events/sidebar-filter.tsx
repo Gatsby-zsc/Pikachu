@@ -10,7 +10,6 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { api } from "@/utils/api";
-import { string } from "zod";
 
 type SidebarFilterTypes = React.HTMLAttributes<HTMLDivElement>;
 
