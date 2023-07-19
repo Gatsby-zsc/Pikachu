@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  publicProcedure,
+  protectedProcedure,
+} from "@/server/api/trpc";
 
 export const eventRouter = createTRPCRouter({
   create: protectedProcedure
@@ -24,7 +28,7 @@ export const eventRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const event = await ctx.prisma.event.create({
+      await ctx.prisma.event.create({
         data: {
           createdUser: ctx.session.user.id,
           title: input.title,
@@ -46,6 +50,8 @@ export const eventRouter = createTRPCRouter({
           },
         },
       });
-      console.log(event);
     }),
+  filterEvents: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.event.findMany();
+  }),
 });
