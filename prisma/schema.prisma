@@ -3,7 +3,7 @@
 
 generator client {
     provider        = "prisma-client-js"
-    previewFeatures = ["jsonProtocol"]
+    // previewFeatures = ["jsonProtocol"]
 }
 
 datasource db {
@@ -182,7 +182,8 @@ model Ticket {
     ticketName        String        @map("ticket_name")
     ticketDescription String        @map("ticket_description")
     price             Float
-    numberOfTickets   Int           @map("number_of_tickets")
+    capacity          Int           
+    remaining         Int           
     orderTickets      OrderTicket[]
 
     @@map(name: "ticket")

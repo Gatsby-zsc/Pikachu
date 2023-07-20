@@ -7,7 +7,6 @@ import {
 
 export const eventRouter = createTRPCRouter({
   create: protectedProcedure
-    // input/output validation, to be done later
     .input(
       z.object({
         title: z.string(),
@@ -29,7 +28,7 @@ export const eventRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const event = await ctx.prisma.event.create({
+      await ctx.prisma.event.create({
         data: {
           createdUser: ctx.session.user.id,
           title: input.title,
@@ -46,13 +45,13 @@ export const eventRouter = createTRPCRouter({
                 ticketName: ticket.ticketName,
                 ticketDescription: ticket.ticketDescription,
                 price: ticket.price,
-                numberOfTickets: ticket.quantity,
+                capacity: ticket.quantity,
+                remaining: ticket.quantity,
               })),
             },
           },
         },
       });
-      console.log(event);
     }),
   getEventDetail: publicProcedure
     .input(z.string())
@@ -68,7 +67,8 @@ export const eventRouter = createTRPCRouter({
               ticketName: true,
               ticketDescription: true,
               price: true,
-              numberOfTickets: true,
+              capacity: true,
+              remaining: true,
             },
           },
         },
