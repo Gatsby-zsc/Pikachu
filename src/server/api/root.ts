@@ -1,6 +1,8 @@
 import { exampleRouter } from "@/server/api/routers/example";
 import { createTRPCRouter } from "@/server/api/trpc";
 import { eventRouter } from "@/server/api/routers/event";
+import { ticketRouter } from "@/server/api/routers/ticket";
+import { favouriteRouterRouter } from "@/server/api/routers/favourite-events";
 import { userRouter } from "@/server/api/routers/user";
 
 /**
@@ -11,6 +13,8 @@ import { userRouter } from "@/server/api/routers/user";
 export const appRouter = createTRPCRouter({
   example: exampleRouter,
   eventRouter: eventRouter,
+  ticketRouter: ticketRouter,
+  favouriteRouter: favouriteRouterRouter,
   userRouter: userRouter,
 });
 

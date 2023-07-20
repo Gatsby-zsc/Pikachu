@@ -10,7 +10,7 @@ export const landingPageConfig: LandingPageConfig = {
   mainNav: [
     {
       title: "Events",
-      href: "/#events",
+      href: "/all-events",
     },
     {
       title: "Blog",
