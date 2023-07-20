@@ -2,40 +2,117 @@ import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
 import { eventCategories, eventTypes } from "@/config/create-event";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { api } from "@/utils/api";
+import { useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import {
+  CalendarDays,
+  LayoutDashboard,
+  Filter,
+  SlidersHorizontal,
+} from "lucide-react";
 
-type SidebarFilterTypes = React.HTMLAttributes<HTMLDivElement>;
+type FilterListType = {
+  Date: string;
+  Category: string;
+  Type: string;
+  isOnline: boolean;
+  onlyEventsFollowed: boolean;
+  sortKey: string;
+  userKey: string;
+};
 
-function SidebarFilter({ className }: SidebarFilterTypes) {
-  const [date, setDates] = useState("");
-  // new Date
+interface SidebarFilterProps {
+  className: string;
+  value: FilterListType;
+  func: React.Dispatch<React.SetStateAction<FilterListType>>;
+}
+
+function SidebarFilter({ className, value, func }: SidebarFilterProps) {
   const [isOpenCategory, setIsOpenCategory] = React.useState(false);
 
   const [isOpenType, setIsOpenType] = React.useState(false);
 
-  api.eventRouter.filterEvents.useQuery({});
+  const { status } = useSession();
+
+  function viewFavourite(checked: boolean) {
+    func((data) => ({ ...data, onlyEventsFollowed: checked }));
+  }
+
+  function filterOnline(checked: boolean) {
+    func((data) => ({ ...data, isOnline: checked }));
+  }
+
+  function changeDate(newDate: string) {
+    func((data) => ({ ...data, Date: newDate }));
+  }
+
+  function restoreDate() {
+    func({ ...value, Date: "none" });
+  }
+
+  function changeCategory(newCategory: string) {
+    func((data) => ({ ...data, Category: newCategory }));
+  }
+
+  function restoreCategory() {
+    func({ ...value, Category: "none" });
+    setIsOpenCategory(false);
+  }
+
+  function changeType(newType: string) {
+    func((data) => ({ ...data, Type: newType }));
+  }
+
+  function restoreType() {
+    func({ ...value, Type: "none" });
+    setIsOpenType(false);
+  }
 
   return (
     <div className="mt-5">
       <div className={className}>
         <div id="default-filter">
-          <p className="text-xl font-bold">Filters</p>
-          <Checkbox id="events-followed" className="mr-2 space-x-2" />
-          <Label htmlFor="events-followed">Only show events I follow</Label>
-          <br />
-          <Checkbox id="online-events" className="mr-2 space-x-2" />
+          <p className="text-xl font-bold">
+            <Filter className="mb-1 mr-1 inline-block" />
+            Filters
+          </p>
+          {status === "authenticated" && (
+            <>
+              <Checkbox
+                onCheckedChange={viewFavourite}
+                id="events-followed"
+                className="mr-2 space-x-2"
+              />
+              <Label htmlFor="events-followed">Only show events I follow</Label>
+              <br />
+            </>
+          )}
+          <Checkbox
+            onCheckedChange={filterOnline}
+            id="online-events"
+            className="mr-2 space-x-2"
+          />
           <Label htmlFor="online-events">Search for online events</Label>
         </div>
         <div id="date-filter" className="mt-8">
-          <p className="mb-1 text-xl font-bold">Date</p>
-          <RadioGroup defaultValue={date} value={date} onValueChange={setDates}>
+          <span className="mr-1 text-center text-xl font-bold">
+            <CalendarDays className="mb-1 mr-1 inline-block" />
+            Date
+            <Button variant="ghost" onClick={restoreDate}>
+              Reset
+            </Button>
+          </span>
+          <RadioGroup
+            defaultValue={value.Date}
+            value={value.Date}
+            onValueChange={changeDate}
+          >
             <div className="space-x-2">
               <RadioGroupItem value="Today" id="r1" />
               <Label htmlFor="r1">Today</Label>
@@ -49,13 +126,6 @@ function SidebarFilter({ className }: SidebarFilterTypes) {
               <Label htmlFor="r3">This weekend</Label>
             </div>
           </RadioGroup>
-          {/* <button
-            onClick={() => {
-              setDates("");
-            }}
-          >
-            change
-          </button> */}
         </div>
         <div id="category-filter" className="mt-8">
           <Collapsible
@@ -63,8 +133,18 @@ function SidebarFilter({ className }: SidebarFilterTypes) {
             onOpenChange={setIsOpenCategory}
             className="w-[350px] space-y-2"
           >
-            <p className="mb-1 text-xl font-bold">Category</p>
-            <RadioGroup>
+            <span className="text-center text-xl font-bold">
+              <LayoutDashboard className="mb-1 mr-1 inline-block" />
+              Category
+              <Button variant="ghost" onClick={restoreCategory}>
+                Reset
+              </Button>
+            </span>
+            <RadioGroup
+              defaultValue={value.Category}
+              value={value.Category}
+              onValueChange={changeCategory}
+            >
               {eventCategories.map(
                 (category, index) =>
                   index < 3 && (
@@ -88,7 +168,7 @@ function SidebarFilter({ className }: SidebarFilterTypes) {
             </RadioGroup>
             <CollapsibleTrigger asChild>
               <span className="cursor-pointer text-sm font-semibold text-blue-600 hover:underline">
-                view more
+                {isOpenCategory ? "view less" : "view more"}
               </span>
             </CollapsibleTrigger>
           </Collapsible>
@@ -99,8 +179,19 @@ function SidebarFilter({ className }: SidebarFilterTypes) {
             onOpenChange={setIsOpenType}
             className="w-[350px] space-y-2"
           >
-            <p className="mb-1 text-xl font-bold">Type</p>
-            <RadioGroup>
+            <span className="text-center text-xl font-bold">
+              <SlidersHorizontal className="mb-1 mr-1 inline-block" />
+              Type
+              <Button variant="ghost" onClick={restoreType}>
+                Reset
+              </Button>
+            </span>
+
+            <RadioGroup
+              defaultValue={value.Type}
+              value={value.Type}
+              onValueChange={changeType}
+            >
               {eventTypes.map(
                 (type, index) =>
                   index < 3 && (
@@ -124,7 +215,7 @@ function SidebarFilter({ className }: SidebarFilterTypes) {
             </RadioGroup>
             <CollapsibleTrigger asChild>
               <span className="cursor-pointer text-sm font-semibold text-blue-600 hover:underline">
-                view more
+                {isOpenType ? "view less" : "view more"}
               </span>
             </CollapsibleTrigger>
           </Collapsible>

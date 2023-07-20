@@ -31,6 +31,7 @@ interface EventCardProps {
 function EventCard({ props }: EventCardProps) {
   const router = useRouter();
 
+  // get event prices
   const eventId = props.id;
   const { data: prices } = api.ticketRouter.prices.useQuery({ eventId });
 
@@ -59,6 +60,28 @@ function EventCard({ props }: EventCardProps) {
   const lowest = Math.min(...priceRange);
   const highest = Math.max(...priceRange);
 
+  // ticket availability
+  const { data: ticketsInfo } = api.ticketRouter.avability.useQuery({
+    eventId: eventId,
+  });
+
+  const allTickets: number[] = ticketsInfo
+    ? ticketsInfo.map((obj) => obj.numberOfTickets)
+    : [];
+
+  const ticketsBooked: number[] = ticketsInfo
+    ? ticketsInfo.map((obj) => obj.orderTickets.length)
+    : [];
+  const sumTickets = allTickets.reduce(
+    (acc, currentValue) => acc + currentValue,
+    0
+  );
+  const sumTicketsOrdered = ticketsBooked.reduce(
+    (acc, currentValue) => acc + currentValue,
+    0
+  );
+
+  // event favourite functionality
   const ctx = api.useContext();
 
   const addFavourite = api.favouriteRouter.add.useMutation({
@@ -90,7 +113,7 @@ function EventCard({ props }: EventCardProps) {
           <Image
             src="/sample.jpg"
             alt="sample"
-            width={200}
+            width={220}
             height={200}
             className="mr-3 rounded-xl pt-1"
           />
@@ -107,14 +130,17 @@ function EventCard({ props }: EventCardProps) {
         <p className="text-s2 pb-[3px] text-gray-600">{props.venue}</p>
 
         {lowest === 0 && lowest === highest ? (
-          <p className="pb-[3px] font-bold">Free</p>
+          <p className="inline pb-[3px] font-bold">Free</p>
         ) : lowest === highest ? (
-          <p className="pb-[3px] font-bold">${lowest}</p>
+          <p className="inline pb-[3px] font-bold">${lowest}</p>
         ) : (
-          <p className="pb-[3px] font-bold">
+          <p className="inline pb-[3px] font-bold">
             ${lowest} - ${highest}
           </p>
         )}
+        <span className="pb-[3px] font-bold">
+          &nbsp;&nbsp;&nbsp;{sumTicketsOrdered} / {sumTickets} tickets
+        </span>
       </div>
       <div className="mb-3 flex items-end">
         <Button

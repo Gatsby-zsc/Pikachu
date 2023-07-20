@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import EventCard from "@/components/all-events/event-card";
 import { api } from "@/utils/api";
 import { SlidersHorizontal } from "lucide-react";
@@ -8,64 +8,53 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
+import { useSession } from "next-auth/react";
 
-type EventListsType = React.HTMLAttributes<HTMLDivElement>;
+type FilterListType = {
+  Date: string;
+  Category: string;
+  Type: string;
+  isOnline: boolean;
+  onlyEventsFollowed: boolean;
+  sortKey: string;
+  userKey: string;
+};
 
-function EventsLists({ className }: EventListsType) {
-  const { data: eventData } = api.eventRouter.filterEvents.useQuery();
-  const [sortField, setSortField] = useState("startTime");
+interface EventListsProps {
+  className: string;
+  value: FilterListType;
+  func: React.Dispatch<React.SetStateAction<FilterListType>>;
+}
 
-  // type eventDataType = (typeof eventData)[0];
+function EventsLists({ className, value, func }: EventListsProps) {
+  const { status } = useSession();
 
-  // function compareVenue(a: eventDataType, b: eventDataType) {
-  //   if (a.venue > b.venue) {
-  //     return -1;
-  //   }
-  //   if (a.venue < b.venue) {
-  //     return 1;
-  //   }
-  //   return 0;
-  // }
+  const { data: eventData } =
+    status === "authenticated"
+      ? api.eventRouter.protectedFilterEvents.useQuery(value)
+      : api.eventRouter.publicFilterEvents.useQuery(value);
 
-  // function compareDate(a: eventDataType, b: eventDataType) {
-  //   const firstSeconds = a.startTime.getTime();
-  //   const secondSeconds = b.startTime.getTime();
-  //   if (firstSeconds > secondSeconds) {
-  //     return -1;
-  //   }
-  //   if (firstSeconds < secondSeconds) {
-  //     return 1;
-  //   }
-  //   return 0;
-  // }
-
-  // useEffect(() => {
-  //   if (eventData) {
-  //     if (sortField === "venue") {
-  //       eventData.sort(compareVenue);
-  //     } else if (sortField === "startTime") {
-  //       eventData.sort(compareDate);
-  //     }
-  //   }
-  // }, [sortField, eventData]);
+  function changeSortKey(key: string) {
+    func((data) => ({ ...data, sortKey: key }));
+  }
 
   return (
     <div className={className}>
-      <div id="sort-by-button" className="mb-5 mt-5">
+      <div id="sort-by-button" className="mb-2 mt-5 pl-5">
         <span className="text-lg">
           <Select
-            onValueChange={setSortField}
-            defaultValue={sortField}
-            value={sortField}
+            onValueChange={changeSortKey}
+            defaultValue={value.sortKey}
+            value={value.sortKey}
           >
             <SelectTrigger className="w-[180px]">
               <SlidersHorizontal />
               <p className="text-lg font-semibold">Sort by</p>
             </SelectTrigger>
             <SelectContent>
-              {/* <SelectItem value="Price">Price</SelectItem> */}
-              <SelectItem value="startTime">Date</SelectItem>
-              <SelectItem value="venue">Location</SelectItem>
+              <SelectItem value="0">none</SelectItem>
+              <SelectItem value="1">Date</SelectItem>
+              <SelectItem value="2">Location</SelectItem>
             </SelectContent>
           </Select>
         </span>

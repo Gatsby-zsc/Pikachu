@@ -53,9 +53,249 @@ export const eventRouter = createTRPCRouter({
         },
       });
     }),
-  filterEvents: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.event.findMany();
-  }),
+  publicFilterEvents: publicProcedure
+    .input(
+      z.object({
+        Date: z.string(),
+        Category: z.string(),
+        Type: z.string(),
+        isOnline: z.boolean(),
+        onlyEventsFollowed: z.boolean(),
+        sortKey: z.string(),
+        userKey: z.string(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      let events = await ctx.prisma.event.findMany();
+
+      // compare date
+      if (input.Date !== "none") {
+        const date = new Date();
+        if (input.Date === "Today") {
+          events = events.filter((event) => {
+            return (
+              event.startTime.getDate() === date.getDate() &&
+              event.startTime.getMonth() === date.getMonth() &&
+              event.startTime.getFullYear() === date.getFullYear()
+            );
+          });
+        } else if (input.Date === "Tomorrow") {
+          date.setDate(date.getDate() + 1);
+          events = events.filter((event) => {
+            return (
+              event.startTime.getDate() === date.getDate() &&
+              event.startTime.getMonth() === date.getMonth() &&
+              event.startTime.getFullYear() === date.getFullYear()
+            );
+          });
+        } else if (input.Date === "This weekend") {
+          events = events.filter((event) => {
+            return (
+              event.startTime.getDate() > date.getDate() &&
+              event.startTime.getDate() - date.getDate() < 7 &&
+              (event.startTime.getDay() === 0 || event.startTime.getDay() === 6)
+            );
+          });
+        }
+      }
+
+      if (input.Category !== "none") {
+        events = events.filter((event) => {
+          return event.category === input.Category;
+        });
+      }
+
+      if (input.Type !== "none") {
+        events = events.filter((event) => {
+          return event.type === input.Type;
+        });
+      }
+
+      if (input.isOnline) {
+        events = events.filter((event) => {
+          return event.isOnline;
+        });
+      }
+
+      type eventDataType = (typeof events)[0];
+
+      function compareVenue(a: eventDataType, b: eventDataType) {
+        if (a.venue < b.venue) {
+          return -1;
+        }
+        if (a.venue > b.venue) {
+          return 1;
+        }
+        return 0;
+      }
+
+      function compareDate(a: eventDataType, b: eventDataType) {
+        const firstSeconds = a.startTime.getTime();
+        const secondSeconds = b.startTime.getTime();
+        if (firstSeconds < secondSeconds) {
+          return -1;
+        }
+        if (firstSeconds > secondSeconds) {
+          return 1;
+        }
+        return 0;
+      }
+
+      if (input.sortKey !== "0") {
+        // sort by Date
+        if (input.sortKey === "1") {
+          events = events.sort(compareDate);
+        }
+        // sort by location
+        else if (input.sortKey === "2") {
+          events = events.sort(compareVenue);
+        }
+      }
+
+      return events;
+    }),
+  protectedFilterEvents: protectedProcedure
+    .input(
+      z.object({
+        Date: z.string(),
+        Category: z.string(),
+        Type: z.string(),
+        isOnline: z.boolean(),
+        onlyEventsFollowed: z.boolean(),
+        sortKey: z.string(),
+        userKey: z.string(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      let events = await ctx.prisma.event.findMany({
+        select: {
+          id: true,
+          createdUser: true,
+          title: true,
+          category: true,
+          type: true,
+          venue: true,
+          startTime: true,
+          endTime: true,
+          isDraft: true,
+          eventStatus: true,
+          isOnline: true,
+          description: true,
+          userFavouriteEvents: true,
+        },
+      });
+
+      // compare date
+      if (input.Date !== "none") {
+        const date = new Date();
+        if (input.Date === "Today") {
+          events = events.filter((event) => {
+            return (
+              event.startTime.getDate() === date.getDate() &&
+              event.startTime.getMonth() === date.getMonth() &&
+              event.startTime.getFullYear() === date.getFullYear()
+            );
+          });
+        } else if (input.Date === "Tomorrow") {
+          date.setDate(date.getDate() + 1);
+          events = events.filter((event) => {
+            return (
+              event.startTime.getDate() === date.getDate() &&
+              event.startTime.getMonth() === date.getMonth() &&
+              event.startTime.getFullYear() === date.getFullYear()
+            );
+          });
+        } else if (input.Date === "This weekend") {
+          events = events.filter((event) => {
+            return (
+              event.startTime.getDate() > date.getDate() &&
+              event.startTime.getDate() - date.getDate() < 7 &&
+              (event.startTime.getDay() === 0 || event.startTime.getDay() === 6)
+            );
+          });
+        }
+      }
+
+      if (input.Category !== "none") {
+        events = events.filter((event) => {
+          return event.category === input.Category;
+        });
+      }
+
+      if (input.Type !== "none") {
+        events = events.filter((event) => {
+          return event.type === input.Type;
+        });
+      }
+
+      if (input.isOnline) {
+        events = events.filter((event) => {
+          return event.isOnline;
+        });
+      }
+
+      if (input.onlyEventsFollowed) {
+        const temp = [];
+        for (const event of events) {
+          let checkFavourite = false;
+          const facouriteList = event ? event.userFavouriteEvents : [];
+          for (const user of facouriteList) {
+            if (user.userId === input.userKey) {
+              checkFavourite = true;
+            }
+          }
+
+          if (checkFavourite) {
+            temp.push(event);
+          }
+        }
+
+        if (temp.length) {
+          events = temp;
+        } else {
+          events = [];
+        }
+      }
+
+      type eventDataType = (typeof events)[0];
+
+      function compareVenue(a: eventDataType, b: eventDataType) {
+        if (a.venue < b.venue) {
+          return -1;
+        }
+        if (a.venue > b.venue) {
+          return 1;
+        }
+        return 0;
+      }
+
+      function compareDate(a: eventDataType, b: eventDataType) {
+        const firstSeconds = a.startTime.getTime();
+        const secondSeconds = b.startTime.getTime();
+        if (firstSeconds < secondSeconds) {
+          return -1;
+        }
+        if (firstSeconds > secondSeconds) {
+          return 1;
+        }
+        return 0;
+      }
+
+      if (input.sortKey !== "0") {
+        // sort by Date
+        if (input.sortKey === "1") {
+          events = events.sort(compareDate);
+        }
+        // sort by location
+        else if (input.sortKey === "2") {
+          events = events.sort(compareVenue);
+        }
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const newEvents = events.map(({ userFavouriteEvents, ...rest }) => rest);
+      return newEvents;
+    }),
   getEventDetail: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
