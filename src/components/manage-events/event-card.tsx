@@ -70,7 +70,7 @@ export const EventCard = ({ props }: EventCardProps) => {
       <div className="">
         <Link href={`/all-events/${eventId}`}>
           <Image
-            src="/sample.jpg"
+            src="/test.jpg"
             alt="sample"
             width={200}
             height={200}

@@ -5,6 +5,7 @@ import { getDuration } from "@/utils/date";
 import { formatPriceRange } from "@/utils/currency";
 import { enGB } from "date-fns/locale";
 import { format } from "date-fns";
+import Image from "next/image";
 
 export type EventDetailProps = {
   eventId: string;
@@ -54,9 +55,9 @@ export function EventDetail({ eventId }: EventDetailProps) {
   return (
     <div className="container mx-auto flex flex-col">
       <div className="grid justify-items-center pt-2">
-        {/* <div className="max-w-7xl rounded-md bg-black bg-[url('/test.jpg')]">
-          <Image src={data.img} width={600} height={300} alt="Image" />
-        </div> */}
+        <div className="max-w-7xl rounded-md bg-black bg-[url('/test.jpg')]">
+          <Image src="/test.jpg" width={600} height={300} alt="Image" />
+        </div>
       </div>
       <div className="pt-12">
         <div className="mb-2 text-base font-semibold text-slate-700">
