@@ -31,6 +31,11 @@ export const dashboardConfig: DashboardConfig = {
       icon: "ticket",
     },
     {
+      title: "Manage Events",
+      href: "/dashboard/manage-events",
+      icon: "calendarCheck",
+    },
+    {
       title: "Account Setting",
       href: "/dashboard/account-setting",
       icon: "settings",

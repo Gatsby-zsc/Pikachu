@@ -1,7 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { useState } from "react";
 import { api } from "@/utils/api";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
@@ -61,22 +60,24 @@ function EventCard({ props }: EventCardProps) {
   const highest = Math.max(...priceRange);
 
   // ticket availability
-  const { data: ticketsInfo } = api.ticketRouter.avability.useQuery({
+  const { data: ticketsInfo } = api.ticketRouter.availability.useQuery({
     eventId: eventId,
   });
 
   const allTickets: number[] = ticketsInfo
-    ? ticketsInfo.map((obj) => obj.numberOfTickets)
+    ? ticketsInfo.map((obj) => obj.capacity)
     : [];
 
-  const ticketsBooked: number[] = ticketsInfo
-    ? ticketsInfo.map((obj) => obj.orderTickets.length)
+  const ticketsRemaining: number[] = ticketsInfo
+    ? ticketsInfo.map((obj) => obj.remaining)
     : [];
+
   const sumTickets = allTickets.reduce(
     (acc, currentValue) => acc + currentValue,
     0
   );
-  const sumTicketsOrdered = ticketsBooked.reduce(
+
+  const sumTicketsOrdered = ticketsRemaining.reduce(
     (acc, currentValue) => acc + currentValue,
     0
   );

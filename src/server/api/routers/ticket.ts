@@ -18,19 +18,20 @@ export const ticketRouter = createTRPCRouter({
         },
       });
     }),
-  avability: publicProcedure
+
+  availability: publicProcedure
     .input(z.object({ eventId: z.string() }))
     .query(async ({ input, ctx }) => {
-      const totalTcikets = await ctx.prisma.ticket.findMany({
+      const totalTickets = await ctx.prisma.ticket.findMany({
         where: {
           eventId: input.eventId,
         },
         select: {
           id: true,
-          numberOfTickets: true,
-          orderTickets: true,
+          capacity: true,
+          remaining: true,
         },
       });
-      return totalTcikets;
+      return totalTickets;
     }),
 });

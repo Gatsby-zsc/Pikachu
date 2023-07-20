@@ -6,11 +6,6 @@ import { useRouter } from "next/router";
 import { format } from "date-fns";
 import { useSession } from "next-auth/react";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -19,6 +14,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 type EventCardType = {
   id: string;
   createdUser: string;
@@ -45,7 +47,6 @@ export const EventCard = ({ props }: EventCardProps) => {
 
   const startDate = new Date(props.startTime);
   const date = format(startDate, "EEEE 'at' hh:mm a");
-  const { status } = useSession();
   const ctx = api.useContext();
 
   const deleteEvent = api.eventRouter.deleteEvent.useMutation({
@@ -82,45 +83,40 @@ export const EventCard = ({ props }: EventCardProps) => {
           <Link href={`/all-events/${eventId}`}>
             <p className="font-heading text-2xl font-bold">{props.title}</p>
           </Link>
-          <Popover>
-            <PopoverTrigger>
-              <p className="cursor-pointer font-bold text-gray-500 transition-all hover:text-gray-950">
-                ...
-              </p>
-            </PopoverTrigger>
-            <PopoverContent>
-              <div className="flex flex-col">
-                <Button variant="outline" onClick={handlePublishEvent}>
-                  Publish
+
+          <Dialog>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <div className="cursor-pointer font-bold text-gray-500 transition-all hover:text-gray-950">
+                  ...
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={handlePublishEvent}>
+                  <span>Publish</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <span>Edit</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <DialogTrigger className="w-full">Delete</DialogTrigger>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Confirm Delete</DialogTitle>
+              </DialogHeader>
+              <DialogDescription>
+                Confirm to delete this event?
+              </DialogDescription>
+              <DialogFooter>
+                <Button type="submit" onClick={handleDeleteEvent}>
+                  Yes, Delete it!
                 </Button>
-                <Link href={`./event/create`} className="w-full">
-                  <Button variant="outline" className="mt-2 w-full">
-                    Edit
-                  </Button>
-                </Link>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="mt-2 bg-rose-400 transition hover:bg-rose-500"
-                    >
-                      Delete
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>Confirm to delete this event？</DialogTitle>
-                    </DialogHeader>
-                    <DialogFooter>
-                      <Button type="submit" onClick={handleDeleteEvent}>
-                        Yes，Delete it！
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            </PopoverContent>
-          </Popover>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
         <p className="text-s2 pb-[3px] text-gray-600">{date}</p>
         <p className="text-s2 pb-[3px] text-gray-600">

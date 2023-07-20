@@ -38,8 +38,7 @@ import { SectionLayout } from "@/components/create-event/section-layout";
 import { AddTicketForm } from "@/components/create-event/add-ticket-form";
 import { TicketList } from "@/components/create-event/ticket-list";
 
-import { atom, Provider, useAtom } from "jotai";
-import { useEffect } from "react";
+import { atom, useAtom } from "jotai";
 
 export const FormSchema = z.object({
   eventTitle: z.string().min(2, {
