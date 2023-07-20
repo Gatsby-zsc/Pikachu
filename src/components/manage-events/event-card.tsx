@@ -86,10 +86,10 @@ export const EventCard = ({ props }: EventCardProps) => {
 
           <Dialog>
             <DropdownMenu>
-              <DropdownMenuTrigger>
-                <div className="cursor-pointer font-bold text-gray-500 transition-all hover:text-gray-950">
+              <DropdownMenuTrigger className="outline-none">
+                <span className="cursor-pointer font-bold text-gray-500 transition-all hover:text-gray-950">
                   ...
-                </div>
+                </span>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem onClick={handlePublishEvent}>
