@@ -7,7 +7,6 @@ import {
 
 export const eventRouter = createTRPCRouter({
   create: protectedProcedure
-    // input/output validation, to be done later
     .input(
       z.object({
         title: z.string(),
@@ -46,7 +45,8 @@ export const eventRouter = createTRPCRouter({
                 ticketName: ticket.ticketName,
                 ticketDescription: ticket.ticketDescription,
                 price: ticket.price,
-                numberOfTickets: ticket.quantity,
+                capacity: ticket.quantity,
+                remaining: ticket.quantity,
               })),
             },
           },
@@ -310,7 +310,8 @@ export const eventRouter = createTRPCRouter({
               ticketName: true,
               ticketDescription: true,
               price: true,
-              numberOfTickets: true,
+              capacity: true,
+              remaining: true,
             },
           },
         },

@@ -2,6 +2,8 @@ import { type LucideProps, type Icon as LucideIcon } from "lucide-react";
 import {
   Ticket,
   ArrowRight,
+  CalendarCheck,
+  Settings,
   ClipboardList,
   CalendarClock,
   MapPin,
@@ -37,4 +39,6 @@ export const Icons = {
   calendarClock: CalendarClock,
   mapPin: MapPin,
   tags: Tags,
+  calendarCheck: CalendarCheck,
+  settings: Settings,
 };

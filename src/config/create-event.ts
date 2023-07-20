@@ -343,3 +343,5 @@ export const states = [
   "Victoria",
   "Western Australia",
 ];
+
+export const paymentTypes = ["Master Card", "Visa", "AMEX", "JCB"];
