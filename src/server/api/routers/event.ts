@@ -28,7 +28,7 @@ export const eventRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      await ctx.prisma.event.create({
+      const event = await ctx.prisma.event.create({
         data: {
           createdUser: ctx.session.user.id,
           title: input.title,
@@ -52,6 +52,8 @@ export const eventRouter = createTRPCRouter({
           },
         },
       });
+
+      return event;
     }),
   getEventDetail: publicProcedure
     .input(z.string())

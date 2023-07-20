@@ -26,6 +26,11 @@ export const dashboardConfig: DashboardConfig = {
       href: "/dashboard/tickets",
       icon: "ticket",
     },
+    {
+      title: "Account Setting",
+      href: "/dashboard/account-setting",
+      icon: "settings",
+    },
   ],
 };
 
@@ -68,9 +73,11 @@ export default function DashboardLayout({
       </header>
       {withSidebar ? (
         <div className="container grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
-          <aside className="hidden w-[200px] flex-col md:flex">
-            <DashboardNav items={dashboardConfig.sidebarNav} />
-          </aside>
+          <div className="flex flex-col">
+            <aside className="hidden w-[200px] flex-col md:flex">
+              <DashboardNav items={dashboardConfig.sidebarNav} />
+            </aside>
+          </div>
           <main className="flex w-full flex-1 flex-col overflow-hidden">
             {children}
           </main>

@@ -58,6 +58,10 @@ model User {
     gender              String?
     name                String?
     phone               String?
+    cardNum             String?
+    expiryDate          String?
+    cardCVC             String?
+    cardHoldName        String?
     email               String?              @unique
     emailVerified       DateTime?            @map("email_verified")
     image               String?
