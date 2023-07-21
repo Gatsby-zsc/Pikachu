@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider        = "prisma-client-js"
+    provider = "prisma-client-js"
     // previewFeatures = ["jsonProtocol"]
 }
 
@@ -104,6 +104,7 @@ model Event {
     userFavouriteEvents UserFavouriteEvent[]
     tickets             Ticket[]
     reviews             Review[]
+    orders              Order[]
     isOnline            Boolean              @default(false) @map("is_online")
 
     @@map(name: "event")
@@ -161,9 +162,21 @@ model BadgeType {
 model Order {
     id               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
     userId           String        @map("user_id") @db.Uuid
+    name             String
+    email            String
+    phone            String
+    shippingAddress  String        @map("shipping_address")
+    billingAddress   String        @map("billing_address")
+    eventId          String        @map("event_id") @db.Uuid
+    cardNum          String        @map("card_number")
+    expiryDate       String        @map("expiry_date")
+    cardCVV          String        @map("card_cvv")
+    bill             Float
+    ticketInfo       Json          @map("ticket_info")
     bookDate         DateTime      @default(now()) @map("book_date")
-    bookStatus       Boolean       @map("book_status")
-    cancellationDate DateTime      @default(now()) @map("cancellation_date")
+    bookStatus       Boolean       @default(false) @map("book_status")
+    cancellationDate DateTime?     @default(now()) @map("cancellation_date")
+    event            Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
     orderTickets     OrderTicket[]
 
     @@map(name: "order")
@@ -186,8 +199,8 @@ model Ticket {
     ticketName        String        @map("ticket_name")
     ticketDescription String        @map("ticket_description")
     price             Float
-    capacity          Int           
-    remaining         Int           
+    capacity          Int
+    remaining         Int
     orderTickets      OrderTicket[]
 
     @@map(name: "ticket")

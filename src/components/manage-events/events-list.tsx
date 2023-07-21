@@ -1,5 +1,5 @@
 import { api } from "@/utils/api";
-import { EventCard } from "./event-card";
+import { EventCard } from "@/components/manage-events/event-card";
 
 export const EventsList = () => {
   const { data: eventData } = api.eventRouter.protectedFilterEvents.useQuery({

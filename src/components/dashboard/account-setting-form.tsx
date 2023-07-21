@@ -200,7 +200,7 @@ export const AccountSettingForm = () => {
               <FormItem>
                 <FormLabel>Expiry day</FormLabel>
                 <FormControl>
-                  <Input placeholder="DD/MM" {...field} />
+                  <Input placeholder="MM/YY" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

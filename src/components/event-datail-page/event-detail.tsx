@@ -5,13 +5,18 @@ import { getDuration } from "@/utils/date";
 import { formatPriceRange } from "@/utils/currency";
 import { enGB } from "date-fns/locale";
 import { format } from "date-fns";
+import React, { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import Image from "next/image";
 
-export type EventDetailProps = {
+type EventDetailProps = {
   eventId: string;
 };
 
 export function EventDetail({ eventId }: EventDetailProps) {
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const { data, isLoading, isError, error } =
     api.eventRouter.getEventDetail.useQuery(eventId, {
       enabled: !!eventId,
@@ -31,16 +36,17 @@ export function EventDetail({ eventId }: EventDetailProps) {
 
   const startDate = new Date(data.startTime);
   const endDate = new Date(data.endTime);
-  // const date = formatDate(startDate);
   const eventStartDate = format(startDate, "EEEE, d MMMM", {
     locale: enGB,
   });
+
   const duration = getDuration(startDate, endDate);
 
   const formattedStartDate = format(
     startDate,
     "eee, dd MMMM yyyy 'at' hh:mm a "
   );
+
   const formattedEndDate = format(
     endDate,
     "eee, dd MMMM yyyy 'at' hh:mm a 'AEST'"
@@ -52,11 +58,20 @@ export function EventDetail({ eventId }: EventDetailProps) {
 
   const priceContent = formatPriceRange(prices);
 
+  const handleBookButton = () => {
+    if (status === "unauthenticated") {
+      void router.replace("/login");
+    }
+    if (status == "authenticated") {
+      void router.push(`${eventId}/bookInfo`);
+    }
+  };
+
   return (
-    <div className="container mx-auto flex flex-col">
+    <div className="container mx-auto mb-10 flex flex-col">
       <div className="grid justify-items-center pt-2">
         <div className="max-w-7xl rounded-md bg-black bg-[url('/test.jpg')]">
-          <Image src="/test.jpg" width={600} height={300} alt="Image" />
+          <Image src="/test.jpg" width={700} height={400} alt="Image" />
         </div>
       </div>
       <div className="pt-12">
@@ -71,7 +86,7 @@ export function EventDetail({ eventId }: EventDetailProps) {
             <p>
               By{" "}
               <span className="font-semibold text-slate-600">
-                {data.createdUser}
+                {data.user.name}
               </span>
             </p>
           </div>
@@ -119,8 +134,15 @@ export function EventDetail({ eventId }: EventDetailProps) {
         </div>
         <div className="w-full md:w-1/3">
           <div className="ml-4 mr-4 w-full rounded-lg border-2 border-slate-100 p-6">
-            <div className="semibold text-center">{priceContent}</div>
-            <Button className="mt-6 w-full">Get tickets</Button>
+            <div className="text-center text-xl font-semibold">
+              {priceContent}
+            </div>
+            <Button
+              className="mt-4 w-full text-base"
+              onClick={handleBookButton}
+            >
+              Get tickets
+            </Button>
           </div>
         </div>
       </div>
