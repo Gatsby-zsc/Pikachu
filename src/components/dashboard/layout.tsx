@@ -61,8 +61,7 @@ export default function DashboardLayout({
     }
   }, [router, status]);
 
-  // TODO: improve loading state
-  if (status === "loading") {
+  if (!session) {
     return null;
   }
 
