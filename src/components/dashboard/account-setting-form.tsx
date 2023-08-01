@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
+// import { paymentTypes } from "@/config/create-event";
 import { api } from "@/utils/api";
 
 const FormSchema = z.object({
@@ -28,6 +29,18 @@ const FormSchema = z.object({
     .refine((phone) => /^\d+$/.test(phone), {
       message: "The telephone number should only contain digits",
     }),
+  billingAddress: z.string().min(10, {
+    message: "The billing address should be at least 10 characters",
+  }),
+  shippingAddress: z.string().min(10, {
+    message: "The shipping address should be at least 10 characters",
+  }),
+  billingPostcode: z.string().refine((phone) => phone.length === 4, {
+    message: "The Postcode should be exactly 4 numbers",
+  }),
+  shippingPostcode: z.string().refine((phone) => phone.length === 4, {
+    message: "The Postcode should be exactly 4 numbers",
+  }),
   cardNum: z
     .string()
     .refine((cardNum) => cardNum.length === 16, {
@@ -62,13 +75,17 @@ const FormSchema = z.object({
 });
 
 export const AccountSettingForm = () => {
-  const updateUserInfo = api.userRouter.updateUser.useMutation();
+  const updateUserInfor = api.userRouter.updateUser.useMutation();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",
       phone: "",
+      billingAddress: "",
+      shippingAddress: "",
+      billingPostcode: "",
+      shippingPostcode: "",
       // paymentType: "Master Card",
       cardNum: "",
       // expiryDateSchema: {},
@@ -82,6 +99,10 @@ export const AccountSettingForm = () => {
     const newData = {
       name: data.name,
       phone: data.phone,
+      billingAddress: data.billingAddress,
+      shippingAddress: data.shippingAddress,
+      billingPostcode: data.billingPostcode,
+      shippingPostcode: data.shippingPostcode,
       // paymentType: data.paymentType,
       cardNum: data.cardNum,
       expiryDate: data.expiryDate,
@@ -99,20 +120,14 @@ export const AccountSettingForm = () => {
     });
     console.log(newData);
 
-    updateUserInfo.mutate(newData);
+    updateUserInfor.mutate(newData);
   }
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="mx-auto w-2/3 space-y-6"
-      >
-        <h1 className="mb-2 text-left text-4xl font-bold">
-          Personal Information
-        </h1>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
         <div className="grid grid-cols-2 gap-4">
-          {/* First name */}
+          {/* name */}
           <FormField
             control={form.control}
             name="name"
@@ -141,11 +156,74 @@ export const AccountSettingForm = () => {
             )}
           />
         </div>
+        {/* Billing Address */}
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="billingAddress"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Billing Address</FormLabel>
+                <FormControl>
+                  <Input placeholder="" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* Billing Code */}
+          <FormField
+            control={form.control}
+            name="billingPostcode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Billing Post Code</FormLabel>
+                <FormControl>
+                  <Input placeholder="2000" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* shipping Address */}
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="shippingAddress"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Shipping Address</FormLabel>
+                <FormControl>
+                  <Input placeholder="" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* Shipping Code */}
+          <FormField
+            control={form.control}
+            name="shippingPostcode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Shipping Post Code</FormLabel>
+                <FormControl>
+                  <Input placeholder="2000" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         {/* update profile photo  */}
         {/* TO DO */}
         <hr className="my-12" />
-        <h1 className="mb-2 text-left text-4xl font-bold">Payment Method</h1>
+        <h1 className="mb-2 text-left text-4xl font-bold">
+          Payment Information
+        </h1>
 
         {/* Payment Types*/}
         {/* <FormField

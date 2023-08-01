@@ -67,6 +67,8 @@ model User {
     image               String?
     billingAddress      String?              @map("billing_address")
     shippingAddress     String?              @map("shipping_address")
+    billingPostcode     String?
+    shippingPostcode    String?
     registrationDate    DateTime             @default(now()) @map("registration_date")
     accounts            Account[]
     sessions            Session[]

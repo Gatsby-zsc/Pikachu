@@ -7,6 +7,10 @@ export const userRouter = createTRPCRouter({
       z.object({
         name: z.string(),
         phone: z.string(),
+        billingAddress: z.string(),
+        shippingAddress: z.string(),
+        billingPostcode: z.string(),
+        shippingPostcode: z.string(),
         cardNum: z.string(),
         expiryDate: z.string(),
         cardCVC: z.string(),
@@ -21,6 +25,10 @@ export const userRouter = createTRPCRouter({
         data: {
           name: input.name,
           phone: input.phone,
+          billingAddress: input.billingAddress,
+          shippingAddress: input.shippingAddress,
+          billingPostcode: input.billingPostcode,
+          shippingPostcode: input.billingPostcode,
           cardNum: input.cardNum,
           expiryDate: input.expiryDate,
           cardCVC: input.cardCVC,
