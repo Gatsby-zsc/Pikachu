@@ -1,4 +1,5 @@
-import { parse, setHours, setMinutes } from "date-fns";
+import { format, parse, setHours, setMinutes } from "date-fns";
+import { enUS, enAU } from "date-fns/locale";
 
 export function combineDateAndTimeString(date: Date, timeString: string): Date {
   const parsedTime = parse(timeString, "h:mm a", new Date());
@@ -9,7 +10,12 @@ export function combineDateAndTimeString(date: Date, timeString: string): Date {
 
   return combinedDate;
 }
-
+export const parseDateToTimeString = (date: Date) => {
+  if (!date) {
+    return format(new Date(), "h:mm a");
+  }
+  return format(date, "h:mm a");
+};
 export function getDuration(startTime: Date, endTime: Date): string {
   // Calculate the duration in milliseconds
   const durationMs = endTime.getTime() - startTime.getTime();

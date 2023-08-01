@@ -182,6 +182,7 @@ export const eventRouter = createTRPCRouter({
           isOnline: true,
           description: true,
           userFavouriteEvents: true,
+          orders: true,
         },
       });
 
@@ -319,6 +320,11 @@ export const eventRouter = createTRPCRouter({
               name: true,
             },
           },
+          orders: {
+            select: {
+              email: true,
+            },
+          },
         },
       });
       return event;
@@ -346,6 +352,7 @@ export const eventRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      console.log("input", input.tickets);
       const event = await ctx.prisma.event.update({
         where: { id: input.id },
         data: {
@@ -370,7 +377,7 @@ export const eventRouter = createTRPCRouter({
           },
         },
       });
-      console.log(event);
+      // console.log('uploadEvent', event);
     }),
   publishEvent: protectedProcedure
     .input(z.string())
@@ -379,16 +386,19 @@ export const eventRouter = createTRPCRouter({
         where: { id: input },
         data: { isDraft: false }, // assuming 1 means published
       });
-      console.log(event);
+      // console.log('event-=-=-=-=-',event);
+      return event;
     }),
 
   deleteEvent: protectedProcedure
     .input(z.string())
     .mutation(async ({ input, ctx }) => {
-      await ctx.prisma.event.deleteMany({
+      const event = await ctx.prisma.event.deleteMany({
         where: {
           id: input,
         },
       });
+      // console.log('event-=-=-=-=-',event);
+      return event;
     }),
 });

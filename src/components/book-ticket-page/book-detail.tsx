@@ -4,6 +4,7 @@ import { api } from "@/utils/api";
 import { format } from "date-fns";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+// import EmailProvider from "next-auth/providers/email";
 import {
   Form,
   FormControl,
@@ -27,7 +28,7 @@ type EventDetailProps = {
 
 export function BookDetail({ eventId }: EventDetailProps) {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [ticketCounts, setTicketCounts] = useState({});
   const [isTicketSelected, setIsTicketSelected] = useState(false);
   const submission = api.orderRouter.createOrderAndUpdateTicket.useMutation();
@@ -48,10 +49,17 @@ export function BookDetail({ eventId }: EventDetailProps) {
     }
   };
 
-  const { data, isLoading, isError, error } =
-    api.eventRouter.getEventDetail.useQuery(eventId, {
-      enabled: !!eventId,
-    });
+  const {
+    data: eventData,
+    isLoading,
+    isError,
+    error,
+  } = api.eventRouter.getEventDetail.useQuery(eventId, {
+    enabled: !!eventId,
+  });
+
+  const sendBookedEmail =
+    api.sendEventEmailRouter.sendBookedRequest.useMutation();
 
   const FormSchema = z.object({
     name: z.string().min(1, {
@@ -96,12 +104,12 @@ export function BookDetail({ eventId }: EventDetailProps) {
     return <div>Error: {error.message}</div>;
   }
 
-  if (data === null) {
+  if (eventData === null) {
     return <div>No data available</div>;
   }
 
-  const startDate = new Date(data.startTime);
-  const endDate = new Date(data.endTime);
+  const startDate = new Date(eventData.startTime);
+  const endDate = new Date(eventData.endTime);
 
   const formattedStartDate = format(
     startDate,
@@ -137,7 +145,10 @@ export function BookDetail({ eventId }: EventDetailProps) {
         </pre>
       ),
     });
-
+    //todo sendBookedRequest emailAddress
+    //console.log("data", eventData)
+    if (eventData)
+      sendBookedEmail.mutate({ email: data.emailAddress, ...eventData });
     submission.mutate(newData, {
       onSuccess: () => {
         void router.push("/all-events");
@@ -304,13 +315,13 @@ export function BookDetail({ eventId }: EventDetailProps) {
           />
         </div>
         <div className="my-2 flex justify-center text-2xl font-semibold">
-          {data.title}
+          {eventData.title}
         </div>
         <div className="my-3 flex justify-center text-base text-slate-500">
           {dateRange}
         </div>
         <div className="h-96 overflow-y-auto">
-          {data.tickets.map((ticket, index) => (
+          {eventData.tickets.map((ticket, index) => (
             <TicketCard
               key={index}
               ticketData={ticket}
