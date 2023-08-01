@@ -37,6 +37,7 @@ import { LocationField } from "@/components/create-event/location-field";
 import { SectionLayout } from "@/components/create-event/section-layout";
 import { AddTicketForm } from "@/components/create-event/add-ticket-form";
 import { TicketList } from "@/components/create-event/ticket-list";
+import { UploadImage } from "@/components/create-event/upload-image";
 
 import { atom, useAtom } from "jotai";
 
@@ -65,11 +66,13 @@ type Ticket = {
 };
 
 export const ticketsAtom = atom<Ticket[]>([]);
+export const imagesAtom = atom<string[]>([]);
 
 export const CreateEventForm = () => {
   const createEvent = api.eventRouter.create.useMutation();
 
   const [tickets] = useAtom(ticketsAtom);
+  const [images] = useAtom(imagesAtom);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -101,6 +104,7 @@ export const CreateEventForm = () => {
       description: data.eventBrief,
       type: data.eventType,
       category: data.eventCategory,
+      images: images,
       venue: data.venue,
       startTime: eventStartComb,
       endTime: eventEndComb,
@@ -226,6 +230,17 @@ export const CreateEventForm = () => {
               )}
             />
           </div>
+        </SectionLayout>
+        <Separator className="my-12" />
+
+        {/* Event Images */}
+        <SectionLayout
+          name="Upload Images"
+          description="Add photos for your event's seats layout and best moments!"
+          icon="image"
+          is_optional={true}
+        >
+          <UploadImage />
         </SectionLayout>
         <Separator className="my-12" />
 

@@ -8,6 +8,7 @@ import {
   CalendarClock,
   MapPin,
   Tags,
+  Image,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -41,4 +42,5 @@ export const Icons = {
   tags: Tags,
   calendarCheck: CalendarCheck,
   settings: Settings,
+  image: Image,
 };

@@ -13,6 +13,7 @@ export const eventRouter = createTRPCRouter({
         description: z.string(),
         type: z.string(),
         category: z.string(),
+        images: z.string().array(),
         venue: z.string(),
         startTime: z.date(),
         endTime: z.date(),
@@ -39,6 +40,7 @@ export const eventRouter = createTRPCRouter({
           startTime: input.startTime,
           endTime: input.endTime,
           eventStatus: input.eventStatus,
+          images: [...input.images],
           tickets: {
             createMany: {
               data: input.tickets.map((ticket) => ({

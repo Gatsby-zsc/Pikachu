@@ -1,17 +1,28 @@
 import { UploadDropzone } from "@/utils/uploadthing";
+import { useEffect, useState } from "react";
 
 export default function UploadthingTest() {
+  const [files, setFiles] = useState<string[]>([]);
+
+  useEffect(() => {
+    console.log("status: ", files);
+  }, [files]);
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <UploadDropzone
         endpoint="imageUploader"
         onClientUploadComplete={(res) => {
-          // Do something with the response
+          // alert("Upload Completed");
           console.log("Files: ", res);
-          alert("Upload Completed");
+          if (!res) return;
+          const uploadedFiles = res.map((file) => file.fileUrl);
+          setFiles({
+            ...files,
+            ...uploadedFiles,
+          });
         }}
         onUploadError={(error: Error) => {
-          // Do something with the error.
           alert(`ERROR! ${error.message}`);
         }}
       />

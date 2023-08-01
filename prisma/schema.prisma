@@ -97,6 +97,7 @@ model Event {
     category            String
     description         String
     type                String
+    images              String[]             @default([])
     venue               String
     startTime           DateTime             @map("start_time")
     endTime             DateTime             @map("end_time")
