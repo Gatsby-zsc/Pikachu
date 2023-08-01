@@ -8,6 +8,10 @@ await import("./src/env.mjs");
 const config = {
   reactStrictMode: true,
 
+  experimental: {
+    esmExternals: false, // for upload thing
+  },
+
   /**
    * If you have `experimental: { appDir: true }` set, then you must comment the below `i18n` config
    * out.
