@@ -94,6 +94,7 @@ export const EventCard = ({ props }: EventCardProps) => {
               className="mr-3 rounded-xl object-cover pt-1"
               fill
               sizes="100%"
+              priority={true}
             />
           </AspectRatio>
         </div>
