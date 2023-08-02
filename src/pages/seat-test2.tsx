@@ -1,5 +1,7 @@
 import { SeatPicker, useSeatPicker } from "@/components/seat-picker";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import type { SetStateAction } from "react";
+import { Button } from "@/components/ui/button";
 
 const App = () => {
   const rows = 10;
@@ -9,7 +11,14 @@ const App = () => {
     { row: 2, col: 3 },
     // Add other reserved seats here
   ];
-  const { seatMap, toggleSeat } = useSeatPicker(rows, cols, reservedSeats, 3);
+  const [maxPickedSeats, setMaxPickedSeats] = useState(1);
+
+  const { seatMap, toggleSeat } = useSeatPicker(
+    rows,
+    cols,
+    reservedSeats,
+    maxPickedSeats
+  );
 
   useEffect(() => {
     console.log(seatMap);
@@ -18,6 +27,15 @@ const App = () => {
   return (
     <div>
       <SeatPicker seatMap={seatMap} onSeatToggle={toggleSeat} />
+      <div className="space-x-2">
+        <Button onClick={() => setMaxPickedSeats(maxPickedSeats + 1)}>
+          Increase
+        </Button>
+        {`maxPickedSeats: ${maxPickedSeats}`}
+        <Button onClick={() => setMaxPickedSeats(maxPickedSeats - 1)}>
+          Decrease
+        </Button>
+      </div>
     </div>
   );
 };

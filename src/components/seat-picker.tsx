@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useEffect } from "react";
 
 export type SeatStatus = "available" | "picked" | "reserved";
 
@@ -13,6 +14,8 @@ export const useSeatPicker = (
   reservedSeats: ReservedSeat[] = [],
   maxPickedSeats = Infinity // specify the max number of picked seats
 ) => {
+  const [reachMax, setReachMax] = useState(false);
+
   const initialSeatMap: SeatStatus[][] = Array.from(
     { length: rows },
     (_, rowIndex) =>
@@ -27,17 +30,25 @@ export const useSeatPicker = (
 
   const [seatMap, setSeatMap] = useState<SeatStatus[][]>(initialSeatMap);
 
-  const toggleSeat = (rowIdx: number, colIdx: number) => {
+  useEffect(() => {
     // Counting the number of currently picked seats
     const pickedSeatsCount = seatMap.reduce(
       (count, row) => count + row.filter((seat) => seat === "picked").length,
       0
     );
 
+    // Check if the current picked seats exceed the new maxPickedSeats value
+    if (pickedSeatsCount >= maxPickedSeats) {
+      setReachMax(true);
+    } else {
+      setReachMax(false);
+    }
+  }, [maxPickedSeats, seatMap]);
+
+  const toggleSeat = (rowIdx: number, colIdx: number) => {
     // Checking if the seat is available to be picked or if it's already picked
     if (
-      (seatMap[rowIdx]?.[colIdx] === "available" &&
-        pickedSeatsCount < maxPickedSeats) ||
+      (seatMap[rowIdx]?.[colIdx] === "available" && !reachMax) ||
       seatMap[rowIdx]?.[colIdx] === "picked"
     ) {
       setSeatMap(
