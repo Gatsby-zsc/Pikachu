@@ -70,7 +70,7 @@ export const EventCard = ({ props }: EventCardProps) => {
         });
 
         toast({
-          title: "delete success!",
+          description: "delete success!",
         });
       }
     },

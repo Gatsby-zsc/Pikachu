@@ -338,6 +338,9 @@ export const eventRouter = createTRPCRouter({
           user: {
             select: {
               name: true,
+              image: true,
+              email: true,
+              registrationDate: true,
             },
           },
           orders: {

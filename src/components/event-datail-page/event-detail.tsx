@@ -24,6 +24,11 @@ import {
   TwitterIcon,
 } from "react-share";
 import { useFullPath } from "@/hooks/use-full-path";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 
 type EventDetailProps = {
   eventId: string;
@@ -101,9 +106,40 @@ export function EventDetail({ eventId }: EventDetailProps) {
           <div className="mb-4 text-base text-slate-400">
             <p>
               By{" "}
-              <span className="font-semibold text-slate-600">
-                {data.user.name}
-              </span>
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <span className="font-semibold text-slate-600 hover:underline">
+                    {data.user.name}
+                  </span>
+                </HoverCardTrigger>
+                <HoverCardContent>
+                  <div className="flex items-center space-x-4">
+                    <div className="mb-2">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={data.user.image || "/test.jpg"}
+                        width={50}
+                        height={50}
+                        alt="User Image"
+                        className="rounded-full"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <div className="mb-2 font-semibold">{data.user.name}</div>
+                      <div className="mb-2 text-sm text-slate-500">
+                        {data.user.email}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="px-auto mt-2 w-full text-center text-xs text-slate-400">
+                    Joined on{" "}
+                    {format(
+                      new Date(data.user.registrationDate),
+                      "dd MMMM yyyy"
+                    )}
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
             </p>
           </div>
 
