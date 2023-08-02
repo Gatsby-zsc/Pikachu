@@ -37,7 +37,9 @@ export const BookedEmail = (props: { eventData: EventDetail }) => (
     <Body style={main}>
       <Container style={container}>
         <Img src="/test.jpg" width="212" height="88" alt="Plaid" style={logo} />
-        <Text style={tertiary}>You booked to an event successfully</Text>
+        <Text style={tertiary}>
+          Thank you, you booked to an event successfully
+        </Text>
         <Section style={codeContainer}>
           <Text style={code}>{props.eventData.title}</Text>
         </Section>

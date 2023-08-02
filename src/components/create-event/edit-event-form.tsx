@@ -88,13 +88,19 @@ interface EditEventFormProps {
 
 export const EditEventForm = ({ eventData, eventId }: EditEventFormProps) => {
   const router = useRouter();
+  const sendEditEmail = api.sendEventEmailRouter.sendEditRequest.useMutation();
 
   const editEvent = api.eventRouter.editEvent.useMutation({
     onSuccess: () => {
       toast({
         description: "Event edited successfully.",
       });
-
+      eventData?.orders.forEach((ele) => {
+        sendEditEmail.mutate({
+          email: ele.email,
+          ...eventData,
+        });
+      });
       void router.push(`/all-events/${eventId}`);
     },
   });
@@ -443,7 +449,7 @@ export const EditEventForm = ({ eventData, eventId }: EditEventFormProps) => {
 
         <div className="w-full">
           <Button type="submit" className="ml-auto block">
-            Submit
+            Update
           </Button>
         </div>
         <div className="my-12" />
