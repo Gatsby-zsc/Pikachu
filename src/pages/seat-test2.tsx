@@ -9,7 +9,7 @@ const App = () => {
     { row: 2, col: 3 },
     // Add other reserved seats here
   ];
-  const { seatMap, toggleSeat } = useSeatPicker(rows, cols, reservedSeats);
+  const { seatMap, toggleSeat } = useSeatPicker(rows, cols, reservedSeats, 3);
 
   useEffect(() => {
     console.log(seatMap);

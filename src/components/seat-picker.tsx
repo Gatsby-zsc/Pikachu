@@ -10,7 +10,8 @@ export interface ReservedSeat {
 export const useSeatPicker = (
   rows: number,
   cols: number,
-  reservedSeats: ReservedSeat[] = []
+  reservedSeats: ReservedSeat[] = [],
+  maxPickedSeats = Infinity // specify the max number of picked seats
 ) => {
   const initialSeatMap: SeatStatus[][] = Array.from(
     { length: rows },
@@ -27,8 +28,16 @@ export const useSeatPicker = (
   const [seatMap, setSeatMap] = useState<SeatStatus[][]>(initialSeatMap);
 
   const toggleSeat = (rowIdx: number, colIdx: number) => {
+    // Counting the number of currently picked seats
+    const pickedSeatsCount = seatMap.reduce(
+      (count, row) => count + row.filter((seat) => seat === "picked").length,
+      0
+    );
+
+    // Checking if the seat is available to be picked or if it's already picked
     if (
-      seatMap[rowIdx]?.[colIdx] === "available" ||
+      (seatMap[rowIdx]?.[colIdx] === "available" &&
+        pickedSeatsCount < maxPickedSeats) ||
       seatMap[rowIdx]?.[colIdx] === "picked"
     ) {
       setSeatMap(
