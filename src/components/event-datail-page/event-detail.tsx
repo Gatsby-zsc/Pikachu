@@ -5,10 +5,25 @@ import { getDuration } from "@/utils/date";
 import { formatPriceRange } from "@/utils/currency";
 import { enGB } from "date-fns/locale";
 import { format } from "date-fns";
-import React, { useState } from "react";
+import React from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import {
+  EmailShareButton,
+  EmailIcon,
+  FacebookShareButton,
+  FacebookIcon,
+  LinkedinShareButton,
+  LinkedinIcon,
+  RedditShareButton,
+  RedditIcon,
+  TelegramShareButton,
+  TelegramIcon,
+  TwitterShareButton,
+  TwitterIcon,
+} from "react-share";
+import { useFullPath } from "@/hooks/use-full-path";
 
 type EventDetailProps = {
   eventId: string;
@@ -16,6 +31,7 @@ type EventDetailProps = {
 
 export function EventDetail({ eventId }: EventDetailProps) {
   const router = useRouter();
+  const fullPath = useFullPath();
   const { data: session, status } = useSession();
   const { data, isLoading, isError, error } =
     api.eventRouter.getEventDetail.useQuery(eventId, {
@@ -82,7 +98,7 @@ export function EventDetail({ eventId }: EventDetailProps) {
       <div className="flex flex-wrap">
         <div className="w-full md:w-2/3">
           <div className="mb-4 text-5xl font-extrabold">{data.title}</div>
-          <div className="mb-6 text-base text-slate-400">
+          <div className="mb-4 text-base text-slate-400">
             <p>
               By{" "}
               <span className="font-semibold text-slate-600">
@@ -90,7 +106,30 @@ export function EventDetail({ eventId }: EventDetailProps) {
               </span>
             </p>
           </div>
-          <div className="mb-3 text-2xl font-bold">When and Where</div>
+
+          {/* Social media icons */}
+          <div className="mb-4 flex space-x-2">
+            <EmailShareButton url={fullPath || "/"}>
+              <EmailIcon size={32} />
+            </EmailShareButton>
+            <FacebookShareButton url={fullPath || "/"}>
+              <FacebookIcon size={32} />
+            </FacebookShareButton>
+            <LinkedinShareButton url={fullPath || "/"}>
+              <LinkedinIcon size={32} />
+            </LinkedinShareButton>
+            <RedditShareButton url={fullPath || "/"}>
+              <RedditIcon size={32} />
+            </RedditShareButton>
+            <TelegramShareButton url={fullPath || "/"}>
+              <TelegramIcon size={32} />
+            </TelegramShareButton>
+            <TwitterShareButton url={fullPath || "/"}>
+              <TwitterIcon size={32} />
+            </TwitterShareButton>
+          </div>
+
+          <div className="mb-3 text-2xl font-bold">When and Whered</div>
           <div className="mb-4 flex flex-col md:flex-row md:space-x-4">
             <div className="flex w-full flex-row items-start p-4 md:w-1/2 md:border-r md:border-gray-300">
               <CalendarIcon className="mr-4 h-6 w-6 opacity-50" />

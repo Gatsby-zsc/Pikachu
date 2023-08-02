@@ -1,6 +1,5 @@
 import { SeatPicker, useSeatPicker } from "@/components/seat-picker";
 import { useEffect, useState } from "react";
-import type { SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
 
 const App = () => {
