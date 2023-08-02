@@ -13,6 +13,7 @@ export const eventRouter = createTRPCRouter({
         description: z.string(),
         type: z.string(),
         category: z.string(),
+        cover_image: z.string(),
         images: z.string().array(),
         venue: z.string(),
         startTime: z.date(),
@@ -40,6 +41,7 @@ export const eventRouter = createTRPCRouter({
           startTime: input.startTime,
           endTime: input.endTime,
           eventStatus: input.eventStatus,
+          cover_image: input.cover_image,
           images: [...input.images],
           tickets: {
             createMany: {

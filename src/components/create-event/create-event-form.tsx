@@ -104,6 +104,7 @@ export const CreateEventForm = () => {
       description: data.eventBrief,
       type: data.eventType,
       category: data.eventCategory,
+      cover_image: images[0] || "/test.jpg",
       images: images,
       venue: data.venue,
       startTime: eventStartComb,
