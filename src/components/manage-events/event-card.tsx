@@ -2,9 +2,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { api } from "@/utils/api";
-import { useRouter } from "next/router";
 import { format } from "date-fns";
-import { useSession } from "next-auth/react";
 import { toast } from "@/components/ui/use-toast";
 
 import {
@@ -45,8 +43,6 @@ interface EventCardProps {
 }
 
 export const EventCard = ({ props }: EventCardProps) => {
-  const router = useRouter();
-
   const eventId = props.id;
   const { data: eventData } = api.eventRouter.getEventDetail.useQuery(eventId);
 
@@ -80,36 +76,10 @@ export const EventCard = ({ props }: EventCardProps) => {
     },
   });
 
-  const publishEvent = api.eventRouter.publishEvent.useMutation({
-    onSuccess: ({ isDraft }) => {
-      void ctx.eventRouter.invalidate();
-      if (!isDraft) {
-        //todo send email to orders
-        // props.orders.forEach((ele) => {
-        //   if (eventData)
-        //     sendPublishEmail.mutate({
-        //       email: ele.email,
-        //       ...eventData,
-        //     });
-        // });
-        toast({
-          title: "publish success!",
-        });
-      }
-    },
-  });
-
   const handleDeleteEvent = () => {
     deleteEvent.mutate(eventId);
   };
 
-  const handlePublishEvent = () => {
-    try {
-      publishEvent.mutate(eventId);
-    } catch (error) {
-      console.error("Error while publishing event:", error);
-    }
-  };
   return (
     <div className="group mb-2 flex rounded-xl p-5 shadow-none shadow-slate-700 transition duration-200 hover:shadow-xl">
       <div className="">
@@ -142,12 +112,8 @@ export const EventCard = ({ props }: EventCardProps) => {
                 </span>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem onClick={handlePublishEvent}>
-                  <span>Publish</span>
-                </DropdownMenuItem>
                 <DropdownMenuItem>
-                  {/* <Link href="/dashboard/event/create" > */}
-                  <Link href={`/dashboard/event/create?eventId=${eventId}`}>
+                  <Link href={`/dashboard/event/edit/${eventId}`}>
                     <span>Edit</span>
                   </Link>
                 </DropdownMenuItem>

@@ -357,22 +357,15 @@ export const eventRouter = createTRPCRouter({
         description: z.string(),
         type: z.string(),
         category: z.string(),
+        cover_image: z.string(),
+        images: z.string().array(),
         venue: z.string(),
         startTime: z.date(),
         endTime: z.date(),
         eventStatus: z.number(),
-        tickets: z
-          .object({
-            ticketName: z.string(),
-            ticketDescription: z.string(),
-            price: z.number(),
-            quantity: z.number(),
-          })
-          .array(),
       })
     )
     .mutation(async ({ input, ctx }) => {
-      console.log("input", input.tickets);
       const event = await ctx.prisma.event.update({
         where: { id: input.id },
         data: {
@@ -384,20 +377,12 @@ export const eventRouter = createTRPCRouter({
           startTime: input.startTime,
           endTime: input.endTime,
           eventStatus: input.eventStatus,
-          tickets: {
-            updateMany: {
-              where: { eventId: input.id },
-              data: input.tickets.map((ticket) => ({
-                ticketName: ticket.ticketName,
-                ticketDescription: ticket.ticketDescription,
-                price: ticket.price,
-                numberOfTickets: ticket.quantity,
-              })),
-            },
-          },
+          cover_image: input.cover_image,
+          images: [...input.images],
         },
       });
-      // console.log('uploadEvent', event);
+
+      return event;
     }),
   publishEvent: protectedProcedure
     .input(z.string())
