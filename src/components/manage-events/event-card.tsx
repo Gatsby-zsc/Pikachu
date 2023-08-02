@@ -4,6 +4,7 @@ import Link from "next/link";
 import { api } from "@/utils/api";
 import { format } from "date-fns";
 import { toast } from "@/components/ui/use-toast";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 import {
   Dialog,
@@ -82,17 +83,21 @@ export const EventCard = ({ props }: EventCardProps) => {
 
   return (
     <div className="group mb-2 flex rounded-xl p-5 shadow-none shadow-slate-700 transition duration-200 hover:shadow-xl">
-      <div className="">
-        <Link href={`/all-events/${eventId}`}>
-          <Image
-            src="/test.jpg"
-            alt="sample"
-            width={200}
-            height={200}
-            className="mr-3 rounded-xl pt-1"
-          />
-        </Link>
-      </div>
+      <Link href={`/all-events/${eventId}`}>
+        {/* Limit the width */}
+        <div className="w-[200px]">
+          {/* Limit the length-width ratio */}
+          <AspectRatio ratio={16 / 9}>
+            <Image
+              src={eventData?.cover_image || "/test.jpg"}
+              alt="image"
+              className="mr-3 rounded-xl object-cover pt-1"
+              fill
+              sizes="100%"
+            />
+          </AspectRatio>
+        </div>
+      </Link>
       <div className="mb-4 ml-5 flex-1">
         <div className="flex flex-row justify-between">
           <Link href={`/all-events/${eventId}`}>
