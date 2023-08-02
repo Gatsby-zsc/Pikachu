@@ -3,7 +3,6 @@ import { imagesAtom } from "@/components/create-event/create-event-form";
 import { useAtom } from "jotai";
 import Image from "next/image";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { useState } from "react";
 import { X } from "lucide-react";
 
 export function UploadImage() {

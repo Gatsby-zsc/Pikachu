@@ -27,6 +27,8 @@ export const eventRouter = createTRPCRouter({
             quantity: z.number(),
           })
           .array(),
+        seatRows: z.number(),
+        seatColumns: z.number(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -54,6 +56,20 @@ export const eventRouter = createTRPCRouter({
               })),
             },
           },
+          seats: {
+            createMany: {
+              data: Array.from(
+                { length: input.seatRows * input.seatColumns },
+                (_, i) => ({
+                  row: Math.floor(i / input.seatColumns) + 1,
+                  col: (i % input.seatColumns) + 1,
+                  status: "available",
+                })
+              ),
+            },
+          },
+          seatRow: input.seatRows,
+          seatColumn: input.seatColumns,
         },
       });
     }),

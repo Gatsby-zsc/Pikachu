@@ -109,7 +109,10 @@ model Event {
     tickets             Ticket[]
     reviews             Review[]
     orders              Order[]
+    seats               Seat[]
     isOnline            Boolean              @default(false) @map("is_online")
+    seatRow             Int                  @default(0) @map("seat_row")
+    seatColumn          Int                  @default(0) @map("seat_column")
 
     @@map(name: "event")
 }
@@ -221,4 +224,15 @@ model Review {
     user          User     @relation(fields: [userId], references: [id])
 
     @@map(name: "review")
+}
+
+model Seat {
+    id      Int    @id @default(autoincrement())
+    eventId String @map("event_id") @db.Uuid
+    row     Int
+    col     Int
+    status  String
+    event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+    @@map(name: "seat")
 }

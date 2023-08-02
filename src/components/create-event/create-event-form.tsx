@@ -38,6 +38,7 @@ import { SectionLayout } from "@/components/create-event/section-layout";
 import { AddTicketForm } from "@/components/create-event/add-ticket-form";
 import { TicketList } from "@/components/create-event/ticket-list";
 import { UploadImage } from "@/components/create-event/upload-image";
+import { useRouter } from "next/router";
 
 import { atom, useAtom } from "jotai";
 
@@ -55,6 +56,12 @@ export const FormSchema = z.object({
   eventEndDate: z.date(),
   eventEndTime: z.string(),
   venue: z.string(),
+  seatRows: z.coerce.number().min(1, {
+    message: "Seat rows must be at least 1.",
+  }),
+  seatColumns: z.coerce.number().min(1, {
+    message: "Seat columns must be at least 1.",
+  }),
 });
 
 type Ticket = {
@@ -69,7 +76,17 @@ export const ticketsAtom = atom<Ticket[]>([]);
 export const imagesAtom = atom<string[]>([]);
 
 export const CreateEventForm = () => {
-  const createEvent = api.eventRouter.create.useMutation();
+  const router = useRouter();
+
+  const createEvent = api.eventRouter.create.useMutation({
+    onSuccess: () => {
+      toast({
+        title: "Event created.",
+      });
+
+      void router.push("/dashboard/manage-events");
+    },
+  });
 
   const [tickets] = useAtom(ticketsAtom);
   const [images] = useAtom(imagesAtom);
@@ -86,10 +103,37 @@ export const CreateEventForm = () => {
       eventEndDate: new Date(),
       eventEndTime: "12:00 AM",
       venue: "",
+      seatRows: 1,
+      seatColumns: 1,
     },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
+    // Check seat quantity is not more than sum of all tickets
+    const totalTicketQuantity = tickets.reduce(
+      (acc, ticket) => acc + ticket.ticketQuantity,
+      0
+    );
+
+    if (data.seatRows * data.seatColumns < totalTicketQuantity) {
+      toast({
+        title: "Seat quantity is not enough.",
+        description: `Seat quantity is not enough for ${totalTicketQuantity} tickets.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check the event end time is not before the start time
+    if (data.eventEndDate < data.eventStartDate) {
+      toast({
+        title: "Event end date invalid.",
+        description: "Event end date is before the start date.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const eventStartComb = combineDateAndTimeString(
       data.eventStartDate,
       data.eventStartTime
@@ -116,17 +160,9 @@ export const CreateEventForm = () => {
         price: ticket.ticketPrice,
         quantity: ticket.ticketQuantity,
       })),
+      seatRows: data.seatRows,
+      seatColumns: data.seatColumns,
     };
-
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(newData, null, 2)}</code>
-        </pre>
-      ),
-    });
-    console.log(newData);
 
     createEvent.mutate(newData);
   }
@@ -397,8 +433,41 @@ export const CreateEventForm = () => {
           description="Tell event-goers the type and price of your event so they can make plans to attend."
           icon="tags"
         >
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="seatRows"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Rows</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    The number of rows in the seat map.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="seatColumns"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Columns</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    The number of columns in the seat map.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <TicketList />
-
           <AddTicketForm />
         </SectionLayout>
         <Separator className="my-12" />
