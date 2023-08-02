@@ -115,7 +115,7 @@ export const EventCard = ({ props }: EventCardProps) => {
           >
             <DropdownMenu>
               <DropdownMenuTrigger className="outline-none">
-                <span className="cursor-pointer font-bold text-gray-500 transition-all hover:text-gray-950">
+                <span className="cursor-pointer select-none font-bold text-gray-500 transition-all hover:text-gray-950">
                   ...
                 </span>
               </DropdownMenuTrigger>

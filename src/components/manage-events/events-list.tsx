@@ -13,7 +13,7 @@ export const EventsList = () => {
   });
 
   return (
-    <div className="group mb-2 flex w-full flex-col rounded-xl p-5 shadow-none">
+    <div className="group mb-2 flex w-full flex-col rounded-xl shadow-none">
       {eventData?.length ? (
         eventData.map((event, index) => (
           <div key={index}>
