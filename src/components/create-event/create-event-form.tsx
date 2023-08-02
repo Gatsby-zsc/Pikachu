@@ -109,6 +109,16 @@ export const CreateEventForm = () => {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
+    // Check if there is at least one ticket
+    if (tickets.length === 0) {
+      toast({
+        title: "No ticket.",
+        description: "Please add at least one ticket.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Check seat quantity is not more than sum of all tickets
     const totalTicketQuantity = tickets.reduce(
       (acc, ticket) => acc + ticket.ticketQuantity,
