@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { type Order } from "@prisma/client";
+import { useRouter } from "next/router";
 
 type EventCardType = {
   id: string;
@@ -46,6 +47,7 @@ interface EventCardProps {
 export const EventCard = ({ props }: EventCardProps) => {
   const eventId = props.id;
   const { data: eventData } = api.eventRouter.getEventDetail.useQuery(eventId);
+  const router = useRouter();
 
   const startDate = new Date(props.startTime);
   const date = format(startDate, "EEEE 'at' hh:mm a");
@@ -118,10 +120,12 @@ export const EventCard = ({ props }: EventCardProps) => {
                 </span>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem>
-                  <Link href={`/dashboard/event/edit/${eventId}`}>
-                    <span>Edit</span>
-                  </Link>
+                <DropdownMenuItem
+                  onClick={() => {
+                    void router.push(`/dashboard/event/edit/${eventId}`);
+                  }}
+                >
+                  Edit
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <DialogTrigger
