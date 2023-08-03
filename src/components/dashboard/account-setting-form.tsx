@@ -18,6 +18,7 @@ import { api } from "@/utils/api";
 
 import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "@/server/api/root";
+import { Separator } from "@/components/ui/separator";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type UserDetails = RouterOutput["userRouter"]["getUserDetails"];
@@ -230,6 +231,8 @@ export const AccountSettingForm = ({ user }: AccountSettingFormProps) => {
             />
           </div>
         </SectionLayout>
+
+        <Separator />
 
         <SectionLayout
           name="Payment Method"
