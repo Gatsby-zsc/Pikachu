@@ -45,16 +45,23 @@ function EventsLists({ className, value, func }: EventListsProps) {
 
   return (
     <div className={className}>
-      <div className="mb-2 mt-5 flex justify-between pl-5">
-        <div>
+      <div className="mb-2 mt-5 flex space-x-2">
+        <div className="flex items-center space-x-2">
+          <div className="font-semibold">Sort by:</div>
           <Select
             onValueChange={changeSortKey}
             defaultValue={value.sortKey}
             value={value.sortKey}
           >
-            <SelectTrigger className="h-8 w-32">
+            <SelectTrigger className="h-8 w-36">
               <SlidersHorizontal className="h-5 w-5" />
-              <p className="font-semibold">Sort by</p>
+              <p className="font-semibold">
+                {value.sortKey === "0"
+                  ? "None"
+                  : value.sortKey === "1"
+                  ? "Date"
+                  : "Location"}
+              </p>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="0">none</SelectItem>
@@ -69,9 +76,11 @@ function EventsLists({ className, value, func }: EventListsProps) {
             defaultValue={value.sortDirection}
             value={value.sortDirection}
           >
-            <SelectTrigger className="h-8 w-36">
+            <SelectTrigger className="h-8 w-40">
               <ArrowUpDown className="h-5 w-5" />
-              <p className="font-semibold">Direction</p>
+              <p className="font-semibold">
+                {value.sortDirection === "asc" ? "Ascending" : "Descending"}
+              </p>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="asc">Ascending</SelectItem>
