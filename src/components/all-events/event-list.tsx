@@ -47,7 +47,7 @@ function EventsLists({ className, value, func }: EventListsProps) {
     <div className={className}>
       <div className="mb-2 mt-5 flex space-x-2">
         <div className="flex items-center space-x-2">
-          <div className="font-semibold">Sort by:</div>
+          <div className="text-sm font-semibold">Sort by:</div>
           <Select
             onValueChange={changeSortKey}
             defaultValue={value.sortKey}
