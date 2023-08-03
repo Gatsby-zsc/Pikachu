@@ -8,31 +8,30 @@ import { HeartOff, Heart } from "lucide-react";
 import { useRouter } from "next/router";
 // import { enGb } from "data-fns/locale";
 import { format } from "date-fns";
+import { AspectRatio } from "@radix-ui/react-aspect-ratio";
+import { formatPriceRange } from "@/utils/currency";
 
-type EventCardType = {
-  id: string;
-  createdUser: string;
-  description: string;
-  endTime: Date;
-  eventStatus: number;
-  isDraft: boolean;
-  isOnline: boolean;
-  startTime: Date;
-  title: string;
-  type: string;
-  venue: string;
-};
+import type { inferRouterOutputs } from "@trpc/server";
+import type { AppRouter } from "@/server/api/root";
+
+type RouterOutput = inferRouterOutputs<AppRouter>;
+type EventDetail = RouterOutput["eventRouter"]["publicFilterEvents"][0];
 
 interface EventCardProps {
-  props: EventCardType;
+  props: EventDetail;
 }
 
 function EventCard({ props }: EventCardProps) {
   const router = useRouter();
 
   // get event prices
+  const pricesRange: number[] = props.tickets.map((ticket) => {
+    return ticket.price;
+  });
+
+  const prices = formatPriceRange(pricesRange);
+
   const eventId = props.id;
-  const { data: prices } = api.ticketRouter.prices.useQuery({ eventId });
 
   const { status } = useSession();
 
@@ -49,35 +48,12 @@ function EventCard({ props }: EventCardProps) {
   const startDate = new Date(props.startTime);
   const date = format(startDate, "EEEE 'at' hh:mm a");
 
-  const priceRange = [];
-  if (prices) {
-    for (const eachPrice of prices) {
-      priceRange.push(eachPrice.price);
-    }
-  }
-
-  const lowest = Math.min(...priceRange);
-  const highest = Math.max(...priceRange);
-
   // ticket availability
-  const { data: ticketsInfo } = api.ticketRouter.availability.useQuery({
-    eventId: eventId,
+  const ticketsRemaining: number[] = props.tickets.map((ticket) => {
+    return ticket.remaining;
   });
 
-  const allTickets: number[] = ticketsInfo
-    ? ticketsInfo.map((obj) => obj.capacity)
-    : [];
-
-  const ticketsRemaining: number[] = ticketsInfo
-    ? ticketsInfo.map((obj) => obj.remaining)
-    : [];
-
-  const sumTickets = allTickets.reduce(
-    (acc, currentValue) => acc + currentValue,
-    0
-  );
-
-  const sumTicketsOrdered = ticketsRemaining.reduce(
+  const sumTicketsRemained = ticketsRemaining.reduce(
     (acc, currentValue) => acc + currentValue,
     0
   );
@@ -111,46 +87,50 @@ function EventCard({ props }: EventCardProps) {
     <div className="group mb-2 flex rounded-xl p-5 shadow-none shadow-slate-700 transition duration-200 hover:shadow-xl">
       <div className="">
         <Link href={`/all-events/${eventId}`}>
-          <Image
-            src="/test.jpg"
-            alt="sample"
-            width={220}
-            height={200}
-            className="mr-3 rounded-xl pt-1"
-          />
+          <div className="w-[200px]">
+            <AspectRatio ratio={16 / 9}>
+              <Image
+                src={`${props.cover_image || "/test.jpg"}`}
+                alt="image"
+                className="mr-3 rounded-xl object-cover pt-1"
+                fill
+                sizes="100%"
+                priority={true}
+              />
+            </AspectRatio>
+          </div>
         </Link>
       </div>
       <div className="mb-4 ml-5 flex-1">
-        <Link href={`/all-events/${eventId}`}>
-          <p className="font-heading text-2xl font-bold">{props.title}</p>
-        </Link>
+        <div className="flex">
+          <Link href={`/all-events/${eventId}`}>
+            <p className="font-heading text-2xl font-bold">{props.title}</p>
+          </Link>
+        </div>
         <p className="text-s2 pb-[3px] text-gray-600">{date}</p>
         <p className="text-s2 pb-[3px] text-gray-600">
           {props.isOnline ? "Online" : "In-place"}
         </p>
         <p className="text-s2 pb-[3px] text-gray-600">{props.venue}</p>
-
-        {lowest === 0 && lowest === highest ? (
-          <p className="inline pb-[3px] font-bold">Free</p>
-        ) : lowest === highest ? (
-          <p className="inline pb-[3px] font-bold">${lowest}</p>
-        ) : (
-          <p className="inline pb-[3px] font-bold">
-            ${lowest} - ${highest}
-          </p>
-        )}
+        <p className="inline pb-[3px] text-lg font-bold">{prices}</p>
         <span className="pb-[3px] font-bold">
-          &nbsp;&nbsp;&nbsp;{sumTicketsOrdered} / {sumTickets} tickets
+          &nbsp;&nbsp;&nbsp;{sumTicketsRemained} tickets left
         </span>
       </div>
       <div className="mb-3 flex items-end">
-        <Button
-          className="invisible group-hover:visible"
-          variant="ghost"
-          onClick={addFavorite}
-        >
-          {favourite ? <HeartOff /> : <Heart />}
-        </Button>
+        {favourite ? (
+          <Button variant="ghost" onClick={addFavorite}>
+            <HeartOff />
+          </Button>
+        ) : (
+          <Button
+            className="invisible group-hover:visible"
+            variant="ghost"
+            onClick={addFavorite}
+          >
+            <Heart />
+          </Button>
+        )}
       </div>
     </div>
   );

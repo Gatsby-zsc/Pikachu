@@ -1,7 +1,7 @@
 import React from "react";
 import EventCard from "@/components/all-events/event-card";
 import { api } from "@/utils/api";
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, ArrowUpDown } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -18,6 +18,7 @@ type FilterListType = {
   onlyEventsFollowed: boolean;
   sortKey: string;
   userKey: string;
+  sortDirection: string;
 };
 
 interface EventListsProps {
@@ -38,26 +39,48 @@ function EventsLists({ className, value, func }: EventListsProps) {
     func((data) => ({ ...data, sortKey: key }));
   }
 
+  function changeDirection(key: string) {
+    func((data) => ({ ...data, sortDirection: key }));
+  }
+
   return (
     <div className={className}>
-      <div id="sort-by-button" className="mb-2 mt-5 pl-5">
-        <span className="text-lg">
+      <div className="mb-2 mt-5 flex justify-between pl-5">
+        <div id="sort-by-button">
+          <span className="text-lg">
+            <Select
+              onValueChange={changeSortKey}
+              defaultValue={value.sortKey}
+              value={value.sortKey}
+            >
+              <SelectTrigger className="w-[130px]">
+                <SlidersHorizontal />
+                <p className="text-lg font-semibold">Sort</p>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="0">none</SelectItem>
+                <SelectItem value="1">Date</SelectItem>
+                <SelectItem value="2">Location</SelectItem>
+              </SelectContent>
+            </Select>
+          </span>
+        </div>
+        <div id="sort-direction">
           <Select
-            onValueChange={changeSortKey}
-            defaultValue={value.sortKey}
-            value={value.sortKey}
+            onValueChange={changeDirection}
+            defaultValue={value.sortDirection}
+            value={value.sortDirection}
           >
-            <SelectTrigger className="w-[180px]">
-              <SlidersHorizontal />
-              <p className="text-lg font-semibold">Sort by</p>
+            <SelectTrigger className="w-[130px]">
+              <ArrowUpDown />
+              <p className="pl-1 text-lg font-semibold">Direct</p>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="0">none</SelectItem>
-              <SelectItem value="1">Date</SelectItem>
-              <SelectItem value="2">Location</SelectItem>
+              <SelectItem value="asc">Ascending</SelectItem>
+              <SelectItem value="des">Descending</SelectItem>
             </SelectContent>
           </Select>
-        </span>
+        </div>
       </div>
       {eventData &&
         eventData.map((event, index) => (

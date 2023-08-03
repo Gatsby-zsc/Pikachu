@@ -17,9 +17,8 @@ const Dashboard = () => {
     onlyEventsFollowed: false,
     sortKey: "0",
     userKey: "none",
+    sortDirection: "asc",
   });
-
-  console.log("query");
 
   useEffect(() => {
     if (status === "authenticated") {

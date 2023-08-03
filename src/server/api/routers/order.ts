@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { Ticket } from "lucide-react";
 
 export const orderRouter = createTRPCRouter({
   createOrderAndUpdateTicket: protectedProcedure

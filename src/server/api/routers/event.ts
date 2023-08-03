@@ -83,10 +83,20 @@ export const eventRouter = createTRPCRouter({
         onlyEventsFollowed: z.boolean(),
         sortKey: z.string(),
         userKey: z.string(),
+        sortDirection: z.string(),
       })
     )
     .query(async ({ input, ctx }) => {
-      let events = await ctx.prisma.event.findMany();
+      let events = await ctx.prisma.event.findMany({
+        include: {
+          tickets: {
+            select: {
+              price: true,
+              remaining: true,
+            },
+          },
+        },
+      });
 
       // compare date
       if (input.Date !== "none") {
@@ -140,25 +150,13 @@ export const eventRouter = createTRPCRouter({
       type eventDataType = (typeof events)[0];
 
       function compareVenue(a: eventDataType, b: eventDataType) {
-        if (a.venue < b.venue) {
-          return -1;
-        }
-        if (a.venue > b.venue) {
-          return 1;
-        }
-        return 0;
+        return a.venue.localeCompare(b.venue);
       }
 
       function compareDate(a: eventDataType, b: eventDataType) {
         const firstSeconds = a.startTime.getTime();
         const secondSeconds = b.startTime.getTime();
-        if (firstSeconds < secondSeconds) {
-          return -1;
-        }
-        if (firstSeconds > secondSeconds) {
-          return 1;
-        }
-        return 0;
+        return firstSeconds - secondSeconds;
       }
 
       if (input.sortKey !== "0") {
@@ -170,6 +168,10 @@ export const eventRouter = createTRPCRouter({
         else if (input.sortKey === "2") {
           events = events.sort(compareVenue);
         }
+      }
+
+      if (input.sortDirection !== "asc") {
+        events = events.reverse();
       }
 
       return events;
@@ -184,25 +186,19 @@ export const eventRouter = createTRPCRouter({
         onlyEventsFollowed: z.boolean(),
         sortKey: z.string(),
         userKey: z.string(),
+        sortDirection: z.string(),
       })
     )
     .query(async ({ input, ctx }) => {
       let events = await ctx.prisma.event.findMany({
-        select: {
-          id: true,
-          createdUser: true,
-          title: true,
-          category: true,
-          type: true,
-          venue: true,
-          startTime: true,
-          endTime: true,
-          isDraft: true,
-          eventStatus: true,
-          isOnline: true,
-          description: true,
-          userFavouriteEvents: true,
-          orders: true,
+        include: {
+          tickets: {
+            select: {
+              price: true,
+              remaining: true,
+            },
+          },
+          userFavouriteEvents: {},
         },
       });
 
@@ -281,25 +277,13 @@ export const eventRouter = createTRPCRouter({
       type eventDataType = (typeof events)[0];
 
       function compareVenue(a: eventDataType, b: eventDataType) {
-        if (a.venue < b.venue) {
-          return -1;
-        }
-        if (a.venue > b.venue) {
-          return 1;
-        }
-        return 0;
+        return a.venue.localeCompare(b.venue);
       }
 
       function compareDate(a: eventDataType, b: eventDataType) {
         const firstSeconds = a.startTime.getTime();
         const secondSeconds = b.startTime.getTime();
-        if (firstSeconds < secondSeconds) {
-          return -1;
-        }
-        if (firstSeconds > secondSeconds) {
-          return 1;
-        }
-        return 0;
+        return firstSeconds - secondSeconds;
       }
 
       if (input.sortKey !== "0") {
@@ -311,6 +295,10 @@ export const eventRouter = createTRPCRouter({
         else if (input.sortKey === "2") {
           events = events.sort(compareVenue);
         }
+      }
+
+      if (input.sortDirection !== "asc") {
+        events = events.reverse();
       }
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -336,11 +324,12 @@ export const eventRouter = createTRPCRouter({
             },
           },
           user: {
-            select: {
-              name: true,
-              image: true,
-              email: true,
-              registrationDate: true,
+            include: {
+              userPoint: {
+                select: {
+                  points: true,
+                },
+              },
             },
           },
           orders: {

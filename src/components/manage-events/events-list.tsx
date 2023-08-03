@@ -10,6 +10,7 @@ export const EventsList = () => {
     onlyEventsFollowed: false,
     sortKey: "0",
     userKey: "none",
+    sortDirection: "asc",
   });
 
   return (

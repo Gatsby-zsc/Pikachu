@@ -25,6 +25,7 @@ type FilterListType = {
   onlyEventsFollowed: boolean;
   sortKey: string;
   userKey: string;
+  sortDirection: string;
 };
 
 interface SidebarFilterProps {
@@ -87,7 +88,7 @@ function SidebarFilter({ className, value, func }: SidebarFilterProps) {
               <Checkbox
                 onCheckedChange={viewFavourite}
                 id="events-followed"
-                className="mr-2 space-x-2"
+                className="mb-3 mr-2 space-x-2"
               />
               <Label htmlFor="events-followed">Only show events I follow</Label>
               <br />
@@ -100,7 +101,7 @@ function SidebarFilter({ className, value, func }: SidebarFilterProps) {
           />
           <Label htmlFor="online-events">Search for online events</Label>
         </div>
-        <div id="date-filter" className="mt-8">
+        <div id="date-filter" className="mt-5">
           <span className="mr-1 text-center text-xl font-bold">
             <CalendarDays className="mb-1 mr-1 inline-block" />
             Date
@@ -127,7 +128,7 @@ function SidebarFilter({ className, value, func }: SidebarFilterProps) {
             </div>
           </RadioGroup>
         </div>
-        <div id="category-filter" className="mt-8">
+        <div id="category-filter" className="mt-5">
           <Collapsible
             open={isOpenCategory}
             onOpenChange={setIsOpenCategory}
@@ -173,7 +174,7 @@ function SidebarFilter({ className, value, func }: SidebarFilterProps) {
             </CollapsibleTrigger>
           </Collapsible>
         </div>
-        <div id="type-filter" className="mt-8">
+        <div id="type-filter" className="mt-5">
           <Collapsible
             open={isOpenType}
             onOpenChange={setIsOpenType}
