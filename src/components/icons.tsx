@@ -9,6 +9,8 @@ import {
   MapPin,
   Tags,
   Image,
+  UserCircle2,
+  CreditCard,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -43,4 +45,6 @@ export const Icons = {
   calendarCheck: CalendarCheck,
   settings: Settings,
   image: Image,
+  userCircle2: UserCircle2,
+  creditCard: CreditCard,
 };

@@ -13,8 +13,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
-// import { paymentTypes } from "@/config/create-event";
+import { SectionLayout } from "@/components/create-event/section-layout";
 import { api } from "@/utils/api";
+
+import type { inferRouterOutputs } from "@trpc/server";
+import type { AppRouter } from "@/server/api/root";
+
+type RouterOutput = inferRouterOutputs<AppRouter>;
+type UserDetails = RouterOutput["userRouter"]["getUserDetails"];
+
+interface AccountSettingFormProps {
+  user: UserDetails;
+}
 
 const FormSchema = z.object({
   name: z.string().min(2, {
@@ -49,10 +59,6 @@ const FormSchema = z.object({
     .refine((cardNum) => /^\d+$/.test(cardNum), {
       message: "The card number should only contain digits",
     }),
-  // expiryDateSchema: z.object({
-  //   month: z.number().min(1, { message: "Month should be between 1 and 12" }).max(12, { message: "Month should be between 1 and 12" }),
-  //   day: z.number().min(1, { message: "Day should be between 1 and 31" }).max(31, { message: "Day should be between 1 and 31" }),
-  // }),
   expiryDate: z
     .string()
     .refine((cardNum) => cardNum.length === 4, {
@@ -74,24 +80,22 @@ const FormSchema = z.object({
   }),
 });
 
-export const AccountSettingForm = () => {
+export const AccountSettingForm = ({ user }: AccountSettingFormProps) => {
   const updateUserInfor = api.userRouter.updateUser.useMutation();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      name: "",
-      phone: "",
-      billingAddress: "",
-      shippingAddress: "",
-      billingPostcode: "",
-      shippingPostcode: "",
-      // paymentType: "Master Card",
-      cardNum: "",
-      // expiryDateSchema: {},
-      expiryDate: "",
-      cardCVC: "",
-      cardHoldName: "",
+      name: user?.name ?? "",
+      phone: user?.phone ?? "",
+      billingAddress: user?.billingAddress ?? "",
+      shippingAddress: user?.shippingAddress ?? "",
+      billingPostcode: user?.billingPostcode ?? "",
+      shippingPostcode: user?.shippingPostcode ?? "",
+      cardNum: user?.cardNum ?? "",
+      expiryDate: user?.expiryDate ?? "",
+      cardCVC: user?.cardCVC ?? "",
+      cardHoldName: user?.cardHoldName ?? "",
     },
   });
 
@@ -125,219 +129,179 @@ export const AccountSettingForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
-        <div className="grid grid-cols-2 gap-4">
-          {/* name */}
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {/* phone  */}
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Phone number</FormLabel>
-                <FormControl>
-                  <Input placeholder="0401000000" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="my-5 w-full space-y-6"
+      >
+        <SectionLayout
+          name="Basic Information"
+          description="Please enter your basic information"
+          icon="userCircle2"
+        >
+          <div className="grid grid-cols-2 gap-4">
+            {/* name */}
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {/* phone  */}
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone number</FormLabel>
+                  <FormControl>
+                    <Input placeholder="0401000000" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          {/* Billing Address */}
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="billingAddress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Billing Address</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {/* Billing Code */}
+            <FormField
+              control={form.control}
+              name="billingPostcode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Billing Post Code</FormLabel>
+                  <FormControl>
+                    <Input placeholder="2000" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* shipping Address */}
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="shippingAddress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Shipping Address</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {/* Shipping Code */}
+            <FormField
+              control={form.control}
+              name="shippingPostcode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Shipping Post Code</FormLabel>
+                  <FormControl>
+                    <Input placeholder="2000" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </SectionLayout>
+
+        <SectionLayout
+          name="Payment Method"
+          description="Please enter your payment method"
+          icon="creditCard"
+        >
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="cardNum"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Card Number</FormLabel>
+                  <FormControl>
+                    <Input placeholder="1234 5678 9012 3456" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="cardHoldName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name on card</FormLabel>
+                  <FormControl>
+                    <Input placeholder="J Smith" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="expiryDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Expiry day</FormLabel>
+                  <FormControl>
+                    <Input placeholder="MM/YY" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {/* CVC */}
+            <FormField
+              control={form.control}
+              name="cardCVC"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>CVC/CVV</FormLabel>
+                  <FormControl>
+                    <Input placeholder="123" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </SectionLayout>
+
+        <div className="w-full">
+          <Button type="submit" className="ml-auto block">
+            Submit
+          </Button>
         </div>
-        {/* Billing Address */}
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="billingAddress"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Billing Address</FormLabel>
-                <FormControl>
-                  <Input placeholder="" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {/* Billing Code */}
-          <FormField
-            control={form.control}
-            name="billingPostcode"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Billing Post Code</FormLabel>
-                <FormControl>
-                  <Input placeholder="2000" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        {/* shipping Address */}
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="shippingAddress"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Shipping Address</FormLabel>
-                <FormControl>
-                  <Input placeholder="" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {/* Shipping Code */}
-          <FormField
-            control={form.control}
-            name="shippingPostcode"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Shipping Post Code</FormLabel>
-                <FormControl>
-                  <Input placeholder="2000" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        {/* update profile photo  */}
-        {/* TO DO */}
-        <hr className="my-12" />
-        <h1 className="mb-2 text-left text-4xl font-bold">
-          Payment Information
-        </h1>
-
-        {/* Payment Types*/}
-        {/* <FormField
-          control={form.control}
-          name="paymentType"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Select a type</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a payment type" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {paymentTypes.map((type, index) => (
-                    <SelectItem key={index} value={type}>
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-
-        {/* Card Number */}
-        <FormField
-          control={form.control}
-          name="cardNum"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Card Number</FormLabel>
-              <FormControl>
-                <Input placeholder="1234 5678 9012 3456" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Expiry day*/}
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="expiryDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Expiry day</FormLabel>
-                <FormControl>
-                  <Input placeholder="MM/YY" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {/* CVC */}
-          <FormField
-            control={form.control}
-            name="cardCVC"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>CVC/CVV</FormLabel>
-                <FormControl>
-                  <Input placeholder="123" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          {/* Name on card */}
-          <FormField
-            control={form.control}
-            name="cardHoldName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name on card</FormLabel>
-                <FormControl>
-                  <Input placeholder="J Smith" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {/* <FormField
-            control={form.control}
-            name="ticketPrice"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Ticket Price</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    ref={field.ref}
-                    value={field.value}
-                    onChange={(event) => {
-                      field.onChange(+event.target.value);
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
-        </div>
-
-        <Button type="submit">Submit</Button>
+        <div className="my-12" />
       </form>
     </Form>
   );
