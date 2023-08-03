@@ -95,6 +95,11 @@ export const eventRouter = createTRPCRouter({
               remaining: true,
             },
           },
+          orders: {
+            select: {
+              email: true,
+            },
+          },
         },
       });
 
@@ -199,6 +204,11 @@ export const eventRouter = createTRPCRouter({
             },
           },
           userFavouriteEvents: {},
+          orders: {
+            select: {
+              email: true,
+            },
+          },
         },
       });
 
