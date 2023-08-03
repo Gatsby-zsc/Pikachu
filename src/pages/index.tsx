@@ -3,6 +3,7 @@ import { cn } from "@/utils/style-utils";
 import { buttonVariants } from "@/components/ui/button";
 import type { ReactElement } from "react";
 import Layout from "@/components/landing-page/layout";
+import { ArrowUpRight } from "lucide-react";
 
 const Home = () => {
   return (
@@ -30,7 +31,7 @@ const Home = () => {
 
       <section className="container flex justify-center">
         <div className="mr-5 basis-1/4 ">
-          <div className="flex h-full flex-col rounded-xl bg-zinc-200 p-8 text-black shadow-none shadow-slate-900 transition-all duration-300 hover:translate-y-[-5%] hover:shadow-md">
+          <div className="group flex h-full flex-col rounded-xl bg-zinc-200 p-8 text-black shadow-none shadow-slate-900 transition-all duration-300 hover:translate-y-[-5%] hover:shadow-md">
             <p className="text-3xl font-bold">
               Create your event with the best online ticketing system
             </p>
@@ -42,15 +43,15 @@ const Home = () => {
               href="/all-events"
               className={cn(
                 buttonVariants({ size: "lg", variant: "link" }),
-                "mt-auto self-start p-0 text-lg underline"
+                "mt-auto self-start p-0 text-lg underline group-hover:animate-shake"
               )}
             >
-              Learn more
+              Learn more <ArrowUpRight className="ml-2 inline-block" />
             </Link>
           </div>
         </div>
         <div className="mr-5 basis-1/4">
-          <div className="flex h-full flex-col rounded-xl bg-zinc-200 p-8 text-black shadow-none shadow-slate-900 transition-all duration-300 hover:translate-y-[-5%] hover:shadow-md">
+          <div className="group flex h-full flex-col rounded-xl bg-zinc-200 p-8 text-black shadow-none shadow-slate-900 transition-all duration-300 hover:translate-y-[-5%] hover:shadow-md">
             <p className="text-3xl font-bold">
               An event ticketing platform built for growth
             </p>
@@ -63,15 +64,15 @@ const Home = () => {
               href="/all-events"
               className={cn(
                 buttonVariants({ size: "lg", variant: "link" }),
-                "mt-auto self-start p-0 text-lg underline"
+                "mt-auto self-start p-0 text-lg underline group-hover:animate-shake"
               )}
             >
-              Learn more
+              Learn more <ArrowUpRight className="ml-2 inline-block" />
             </Link>
           </div>
         </div>
         <div className="mr-5 basis-1/4">
-          <div className="flex h-full flex-col rounded-xl bg-zinc-200 p-8 text-black shadow-none shadow-slate-900 transition-all duration-300 hover:translate-y-[-5%] hover:shadow-md">
+          <div className="group flex h-full flex-col rounded-xl bg-zinc-200 p-8 text-black shadow-none shadow-slate-900 transition-all duration-300 hover:translate-y-[-5%] hover:shadow-md">
             <p className="text-3xl font-bold">
               Build and engage your community
             </p>
@@ -84,10 +85,10 @@ const Home = () => {
               href="/all-events"
               className={cn(
                 buttonVariants({ size: "lg", variant: "link" }),
-                "mt-auto self-start p-0 text-lg underline"
+                "mt-auto self-start p-0 text-lg underline group-hover:animate-shake"
               )}
             >
-              Learn more
+              Learn more <ArrowUpRight className="ml-2 inline-block" />
             </Link>
           </div>
         </div>
