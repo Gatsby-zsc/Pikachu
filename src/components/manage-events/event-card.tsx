@@ -22,23 +22,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
-import { type Order } from "@prisma/client";
+// import { type Order } from "@prisma/client";
 import { useRouter } from "next/router";
+import type { inferRouterOutputs } from "@trpc/server";
+import type { AppRouter } from "@/server/api/root";
 
-type EventCardType = {
-  id: string;
-  createdUser: string;
-  description: string;
-  endTime: Date;
-  eventStatus: number;
-  isDraft: boolean;
-  isOnline: boolean;
-  startTime: Date;
-  title: string;
-  type: string;
-  venue: string;
-  orders: Order[];
-};
+type RouterOutput = inferRouterOutputs<AppRouter>;
+type EventList = RouterOutput["eventRouter"]["protectedFilterEvents"];
+type ArrayElement<T> = T extends (infer U)[] ? U : never;
+type EventCardType = ArrayElement<EventList>;
 
 interface EventCardProps {
   props: EventCardType;
