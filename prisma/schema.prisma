@@ -179,22 +179,23 @@ model Order {
     expiryDate       String        @map("expiry_date")
     cardCVV          String        @map("card_cvv")
     bill             Float
-    ticketInfo       Json          @map("ticket_info")
     bookDate         DateTime      @default(now()) @map("book_date")
     bookStatus       Boolean       @default(false) @map("book_status")
     cancellationDate DateTime?     @default(now()) @map("cancellation_date")
     event            Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
     orderTickets     OrderTicket[]
+    seats            Seat[]
 
     @@map(name: "order")
 }
 
 model OrderTicket {
-    id       Int    @id @default(autoincrement())
-    orderId  String @map("order_id") @db.Uuid
-    ticketId Int    @map("ticket_id")
-    order    Order  @relation(fields: [orderId], references: [id])
-    ticket   Ticket @relation(fields: [ticketId], references: [id])
+    id           Int    @id @default(autoincrement())
+    orderId      String @map("order_id") @db.Uuid
+    ticketId     Int    @map("ticket_id")
+    ticketNumber Int    @map("ticket_number")
+    order        Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    ticket       Ticket @relation(fields: [ticketId], references: [id])
 
     @@map(name: "order_ticket")
 }
@@ -213,6 +214,20 @@ model Ticket {
     @@map(name: "ticket")
 }
 
+model Seat {
+    id      Int     @id @default(autoincrement())
+    eventId String  @map("event_id") @db.Uuid
+    row     Int
+    col     Int
+    status  String
+    orderId String? @map("order_id") @db.Uuid
+    order   Order?  @relation(fields: [orderId], references: [id])
+    event   Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+    @@unique([eventId, row, col], name: "eventId_row_col")
+    @@map(name: "seat")
+}
+
 model Review {
     id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
     eventId       String   @map("event_id") @db.Uuid
@@ -224,15 +239,4 @@ model Review {
     user          User     @relation(fields: [userId], references: [id])
 
     @@map(name: "review")
-}
-
-model Seat {
-    id      Int    @id @default(autoincrement())
-    eventId String @map("event_id") @db.Uuid
-    row     Int
-    col     Int
-    status  String
-    event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
-
-    @@map(name: "seat")
 }

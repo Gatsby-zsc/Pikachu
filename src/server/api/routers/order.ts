@@ -1,7 +1,94 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { TRPCError } from "@trpc/server";
+import { Code } from "lucide-react";
 
 export const orderRouter = createTRPCRouter({
+  getAllSeats: protectedProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      const seats = await ctx.prisma.seat.findMany({
+        where: {
+          eventId: input,
+        },
+      });
+
+      const maxRow = Math.max(...seats.map((seat) => seat.row));
+      const maxCol = Math.max(...seats.map((seat) => seat.col));
+
+      const reservedSeats = seats
+        .filter((seat) => seat.status === "reserved")
+        .map((seat) => ({ row: seat.row - 1, col: seat.col - 1 }));
+
+      return {
+        seats,
+        maxRow,
+        maxCol,
+        reservedSeats,
+      };
+    }),
+  getAllorders: protectedProcedure.query(async ({ ctx }) => {
+    const orders = await ctx.prisma.order.findMany({
+      where: { userId: ctx.session.user.id },
+      include: {
+        event: {
+          select: {
+            id: true,
+            title: true,
+            cover_image: true,
+            venue: true,
+            startTime: true,
+          },
+        },
+        seats: {
+          select: {
+            row: true,
+            col: true,
+          },
+        },
+        orderTickets: {
+          include: {
+            ticket: true,
+          },
+        },
+      },
+    });
+    return orders;
+  }),
+
+  getUniqueOrder: protectedProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      const order = await ctx.prisma.order.findUnique({
+        where: { id: input },
+        include: {
+          event: {
+            select: {
+              id: true,
+              title: true,
+              cover_image: true,
+              venue: true,
+              startTime: true,
+              description: true,
+            },
+          },
+          seats: {
+            select: {
+              id: true,
+              row: true,
+              col: true,
+            },
+          },
+          orderTickets: {
+            include: {
+              ticket: true,
+            },
+          },
+        },
+      });
+      return order;
+    }),
+
   createOrderAndUpdateTicket: protectedProcedure
     .input(
       z.object({
@@ -14,12 +101,20 @@ export const orderRouter = createTRPCRouter({
         expiryDate: z.string(),
         cardCVV: z.string(),
         eventId: z.string(),
+        bills: z.number(),
         ticketInfo: z.record(z.number()),
+        seatsInfo: z.array(
+          z.object({
+            row: z.number(),
+            col: z.number(),
+          })
+        ),
       })
     )
     .mutation(async ({ input, ctx }) => {
-      // Create the order first
-      const order = await ctx.prisma.order.create({
+      // Update seats
+
+      const orderCreatePromise = await ctx.prisma.order.create({
         data: {
           name: input.name,
           phone: input.phone,
@@ -30,147 +125,113 @@ export const orderRouter = createTRPCRouter({
           expiryDate: input.expiryDate,
           cardCVV: input.cardCVV,
           eventId: input.eventId,
-          ticketInfo: input.ticketInfo,
           userId: ctx.session.user.id,
-          bill: 0,
+          bill: input.bills,
+          orderTickets: {
+            createMany: {
+              data: Object.entries(input.ticketInfo).map(
+                ([ticketId, ticketNumbers]) => {
+                  return {
+                    ticketId: parseInt(ticketId),
+                    ticketNumber: ticketNumbers,
+                  };
+                }
+              ),
+            },
+          },
           bookDate: new Date(),
           bookStatus: true,
         },
       });
 
-      // Calculate total bill
-      let totalBill = 0;
-
-      // Update ticket counts
-      for (const ticketIdStr in input.ticketInfo) {
-        const ticketId = parseInt(ticketIdStr);
-        const numberOftickets = input.ticketInfo[ticketIdStr];
-
-        if (numberOftickets === undefined) {
-          throw new Error(
-            `Ticket count not found for ticket id ${ticketIdStr}`
-          );
+      const updatePromises = Object.entries(input.ticketInfo).map(
+        ([ticketId, ticketNumbers]) => {
+          return ctx.prisma.ticket.update({
+            where: { id: parseInt(ticketId) },
+            data: {
+              remaining: {
+                decrement: ticketNumbers,
+              },
+            },
+          });
         }
+      );
 
-        const ticket = await ctx.prisma.ticket.findUnique({
-          where: { id: ticketId },
+      const seatUpdatePromises = input.seatsInfo.map((seatInfo) => {
+        return ctx.prisma.seat.update({
+          where: {
+            eventId_row_col: {
+              eventId: input.eventId,
+              row: seatInfo.row + 1,
+              col: seatInfo.col + 1,
+            },
+          },
+          data: {
+            status: "reserved",
+            orderId: orderCreatePromise.id,
+          },
         });
-
-        if (!ticket || ticket.remaining < numberOftickets) {
-          throw new Error("Insufficient tickets");
-        }
-
-        await ctx.prisma.ticket.update({
-          where: { id: ticketId },
-          data: { remaining: ticket.remaining - numberOftickets },
-        });
-
-        totalBill += ticket.price * numberOftickets;
-      }
-
-      // Update order with total bill
-      await ctx.prisma.order.update({
-        where: { id: order.id },
-        data: { bill: totalBill },
       });
+
+      await ctx.prisma.$transaction([...seatUpdatePromises, ...updatePromises]);
     }),
-  getOrders: protectedProcedure
+  cancelOrderAndUpdateTicket: protectedProcedure
     .input(z.string())
-    .query(async ({ input, ctx }) => {
-      const orders = await ctx.prisma.order.findMany({
-        where: { userId: input },
+    .mutation(async ({ input, ctx }) => {
+      const order = await ctx.prisma.order.findUnique({
+        where: { id: input },
         include: {
-          orderTickets: { include: { ticket: true } },
-          event: true,
+          seats: {
+            select: {
+              id: true,
+            },
+          },
+          orderTickets: {
+            include: {
+              ticket: true,
+            },
+          },
         },
       });
 
-      if (!orders || orders.length === 0) {
-        throw new Error("No orders found for this user");
-      }
+      if (!order)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Order not found",
+        });
 
-      return orders;
-    }),
-  cancelOrder: protectedProcedure
-    .input(z.string())
-    .mutation(async ({ input, ctx }) => {
-      const order = await ctx.prisma.order.findUnique({
+      const orderCancelPromise = ctx.prisma.order.update({
         where: { id: input },
+        data: {
+          bookStatus: false,
+          cancellationDate: new Date(),
+        },
       });
 
-      if (!order) {
-        throw new Error("Order not found");
-      }
-
-      const ticketInfo = order.ticketInfo;
-
-      if (
-        typeof ticketInfo === "object" &&
-        ticketInfo !== null &&
-        !Array.isArray(ticketInfo)
-      ) {
-        for (const ticketIdStr in ticketInfo) {
-          const ticketId = parseInt(ticketIdStr);
-          const numberOfTickets = (ticketInfo as Record<string, number>)[
-            ticketIdStr
-          ];
-
-          if (typeof numberOfTickets === "number") {
-            await ctx.prisma.ticket.update({
-              where: { id: ticketId },
-              data: { remaining: { increment: numberOfTickets } },
-            });
-          }
-        }
-      } else {
-        throw new Error("ticketInfo should be an object");
-      }
-
-      await ctx.prisma.order.update({
-        where: { id: input },
-        data: { bookStatus: false, cancellationDate: new Date() },
+      const ticketUpdatePromises = order.orderTickets.map((orderTicket) => {
+        return ctx.prisma.ticket.update({
+          where: { id: orderTicket.ticketId },
+          data: {
+            remaining: {
+              increment: orderTicket.ticketNumber,
+            },
+          },
+        });
       });
 
-      return { message: "Order cancelled and tickets released" };
-    }),
-
-  deleteOrder: protectedProcedure
-    .input(z.string())
-    .mutation(async ({ input, ctx }) => {
-      const order = await ctx.prisma.order.findUnique({
-        where: { id: input },
+      const seatUpdatePromises = order.seats.map((seat) => {
+        return ctx.prisma.seat.update({
+          where: { id: seat.id },
+          data: {
+            status: "available",
+          },
+        });
       });
 
-      if (!order) {
-        throw new Error("Order not found");
-      }
-
-      const ticketInfo = order.ticketInfo;
-
-      if (
-        typeof ticketInfo === "object" &&
-        ticketInfo !== null &&
-        !Array.isArray(ticketInfo)
-      ) {
-        for (const ticketIdStr in ticketInfo) {
-          const ticketId = parseInt(ticketIdStr);
-          const numberOfTickets = (ticketInfo as Record<string, number>)[
-            ticketIdStr
-          ];
-
-          if (typeof numberOfTickets === "number") {
-            await ctx.prisma.ticket.update({
-              where: { id: ticketId },
-              data: { remaining: { increment: numberOfTickets } },
-            });
-          }
-        }
-      } else {
-        throw new Error("ticketInfo should be an object");
-      }
-
-      await ctx.prisma.order.delete({ where: { id: input } });
-
-      return { message: "Order deleted and tickets released" };
+      await ctx.prisma.$transaction([
+        orderCancelPromise,
+        ...ticketUpdatePromises,
+        ...seatUpdatePromises,
+      ]);
     }),
 });

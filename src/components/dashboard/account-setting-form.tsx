@@ -123,7 +123,6 @@ export const AccountSettingForm = ({ user }: AccountSettingFormProps) => {
         </pre>
       ),
     });
-    console.log(newData);
 
     updateUserInfor.mutate(newData);
   }

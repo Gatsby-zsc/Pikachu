@@ -1,7 +1,7 @@
 import { TicketCard } from "@/components/book-ticket-page/ticket-card";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { api } from "@/utils/api";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 // import EmailProvider from "next-auth/providers/email";
@@ -18,35 +18,82 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useSession } from "next-auth/react";
 import { Input } from "@/components/ui/input";
-import { Receipt } from "lucide-react";
+import { Receipt, Armchair } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/router";
+import {
+  SeatGraph,
+  maxPickedSeatsAtom,
+} from "@/components/book-ticket-page/seat-pick";
+import { atom, useAtom } from "jotai";
+import type { SeatStatus } from "@/components/seat-picker";
 
 type EventDetailProps = {
   eventId: string;
 };
 
+type Ticket = {
+  id: number;
+  ticketName: string;
+  ticketDescription: string;
+  price: number;
+  capacity: number;
+  remaining: number;
+};
+
+type SelectedTickets = {
+  [ticketId: number]: number;
+};
+
+export const seatMapInfoAtom = atom<SeatStatus[][]>([]);
+export const maxSeatNumAtom = atom<number>(0);
+
 export function BookDetail({ eventId }: EventDetailProps) {
   const router = useRouter();
   const { data: session } = useSession();
-  const [ticketCounts, setTicketCounts] = useState({});
+  const [ticketCounts, setTicketCounts] = useState<SelectedTickets>({});
   const [isTicketSelected, setIsTicketSelected] = useState(false);
+  const { data, status } = api.orderRouter.getAllSeats.useQuery(eventId);
   const submission = api.orderRouter.createOrderAndUpdateTicket.useMutation();
+  const ctx = api.useContext();
+
+  const [seatMapInfo = []] = useAtom(seatMapInfoAtom);
+
+  const [maxPickedSeats, setMaxPickedSeats] = useAtom(maxPickedSeatsAtom);
+
+  useEffect(() => {
+    let totalQuantity = 0;
+    for (const ticketId in ticketCounts) {
+      const ticketQuantity = ticketCounts[parseInt(ticketId)];
+      if (typeof ticketQuantity === "undefined") {
+        continue;
+      }
+      totalQuantity += ticketQuantity;
+    }
+    setMaxPickedSeats(totalQuantity);
+  }, [ticketCounts, setMaxPickedSeats]);
 
   const updateTicketCount = (ticketId: number, count: number) => {
-    setTicketCounts({
+    const updatedTicketCounts = {
       ...ticketCounts,
       [ticketId]: count,
-    });
-    if (count > 0) {
-      setIsTicketSelected(true);
-    } else {
-      // Check if any other tickets are selected
-      const otherTicketsSelected = Object.values(ticketCounts).some(
-        (ticketCount) => (ticketCount as number) > 0
-      );
-      setIsTicketSelected(otherTicketsSelected);
-    }
+    };
+    // if (count > 0) {
+    //   setIsTicketSelected(true);
+    // } else {
+    //   // Check if any other tickets are selected
+    //   const otherTicketsSelected = Object.values(ticketCounts).some(
+    //     (ticketCount) => ticketCount > 0
+    //   );
+    //   setIsTicketSelected(otherTicketsSelected);
+    // }
+    setTicketCounts(updatedTicketCounts);
+
+    const otherTicketsSelected = Object.values(updatedTicketCounts).some(
+      (ticketCount) => ticketCount > 0
+    );
+
+    setIsTicketSelected(otherTicketsSelected);
   };
 
   const {
@@ -71,7 +118,7 @@ export function BookDetail({ eventId }: EventDetailProps) {
     }),
     billingAddress: z.string(),
     shippingAddress: z.string(),
-    cardNum: z.string().length(16, {
+    cardNum: z.string().min(1, {
       message: "invalid card number length",
     }),
     expiryDate: z.string().length(5, {
@@ -81,6 +128,26 @@ export function BookDetail({ eventId }: EventDetailProps) {
       message: "invalid CVV length",
     }),
   });
+
+  const calculateTotalPrice = (
+    tickets: Ticket[],
+    ticketCounts: SelectedTickets
+  ): number => {
+    let totalPrice = 0;
+
+    for (const ticketId in ticketCounts) {
+      const ticketQuantity = ticketCounts[parseInt(ticketId)];
+      if (typeof ticketQuantity === "undefined") {
+        continue;
+      }
+      const ticket = tickets.find((t) => t.id === parseInt(ticketId));
+
+      if (ticket) {
+        totalPrice += ticket.price * ticketQuantity;
+      }
+    }
+    return totalPrice;
+  };
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -96,7 +163,7 @@ export function BookDetail({ eventId }: EventDetailProps) {
     },
   });
 
-  if (isLoading) {
+  if (isLoading || !data) {
     return <div>Loading...</div>;
   }
 
@@ -122,43 +189,77 @@ export function BookDetail({ eventId }: EventDetailProps) {
   );
 
   const dateRange = `${formattedStartDate} - ${formattedEndDate}`;
+  const bill = calculateTotalPrice(eventData.tickets, ticketCounts);
+
+  // analyse seatMapInfo
+  type PickedSeatsInfo = {
+    count: number;
+    positions: Array<{ row: number; col: number }>;
+  };
+
+  function getPickedSeatsInfo(seatMapInfo: SeatStatus[][]): PickedSeatsInfo {
+    let pickedSeatsCount = 0;
+    const pickedSeatsPositions: Array<{ row: number; col: number }> = [];
+
+    for (let row = 0; row < seatMapInfo.length; row++) {
+      const seatRow = seatMapInfo[row];
+      if (!seatRow) continue;
+      for (let col = 0; col < seatRow.length; col++) {
+        if (seatRow[col] === "picked") {
+          pickedSeatsCount++;
+          pickedSeatsPositions.push({ row, col });
+        }
+      }
+    }
+
+    return {
+      count: pickedSeatsCount,
+      positions: pickedSeatsPositions,
+    };
+  }
+  const pickedSeatsInfo = getPickedSeatsInfo(seatMapInfo);
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    const newData = {
-      name: data.name,
-      phone: data.phone,
-      emailAddress: data.emailAddress,
-      shippingAddress: data.shippingAddress,
-      billingAddress: data.billingAddress,
-      cardNum: data.cardNum,
-      expiryDate: data.expiryDate,
-      cardCVV: data.cardCVV,
-      eventId: eventId,
-      ticketInfo: ticketCounts,
-    };
+    if (pickedSeatsInfo.count !== maxPickedSeats) {
+      toast({
+        variant: "destructive",
+        title: "You haven't picked enough seats",
+      });
+    } else {
+      const newData = {
+        name: data.name,
+        phone: data.phone,
+        emailAddress: data.emailAddress,
+        shippingAddress: data.shippingAddress,
+        billingAddress: data.billingAddress,
+        cardNum: data.cardNum,
+        expiryDate: data.expiryDate,
+        cardCVV: data.cardCVV,
+        eventId: eventId,
+        bills: bill,
+        ticketInfo: ticketCounts,
+        seatsInfo: pickedSeatsInfo.positions,
+      };
 
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(newData, null, 2)}</code>
-        </pre>
-      ),
-    });
-    //todo sendBookedRequest emailAddress
-    //console.log("data", eventData)
-    if (eventData)
-      sendBookedEmail.mutate({ email: data.emailAddress, ...eventData });
-    submission.mutate(newData, {
-      onSuccess: () => {
-        void router.push("/all-events");
-      },
-    });
+      //todo sendBookedRequest emailAddress
+      //console.log("data", eventData)
+      // if (eventData)
+      //   sendBookedEmail.mutate({ email: data.emailAddress, ...eventData });
+      submission.mutate(newData, {
+        onSuccess: () => {
+          void ctx.orderRouter.getAllSeats.invalidate();
+          void router.push(`/all-events/${eventId}`);
+          toast({
+            title: "You have successfully booked!",
+          });
+        },
+      });
+    }
   }
 
   return (
     <div className="my-6 flex h-full w-full flex-wrap-reverse">
-      <div className="relative w-full md:w-7/12">
+      <div className="h-screen w-full overflow-y-scroll md:w-7/12">
         <div className="mx-auto mb-6 flex flex-row items-center">
           <Receipt className="mr-2 h-10 w-10" />
           <p className="text-3xl font-bold">Billing Information</p>
@@ -166,7 +267,7 @@ export function BookDetail({ eventId }: EventDetailProps) {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="w-4/5 space-y-8"
+            className="w-full space-y-6 pr-6"
           >
             <div className="flex flex-row gap-x-10">
               <div className="w-1/2">
@@ -294,17 +395,24 @@ export function BookDetail({ eventId }: EventDetailProps) {
                 </div>
               </div>
             </div>
-            <Button
-              className="absolute bottom-0 right-5"
-              type="submit"
-              disabled={!isTicketSelected}
-            >
-              Submit
-            </Button>
+            <div className="mx-auto mb-6 flex flex-row items-center">
+              <Armchair className="mr-2 h-10 w-10" />
+              <p className="text-3xl font-bold">Pick your seats</p>
+            </div>
+            <SeatGraph props={data} />
+            <div className="grid justify-items-end">
+              <Button
+                type="submit"
+                className={!isTicketSelected ? "cursor-not-allow" : ""}
+                disabled={!isTicketSelected}
+              >
+                Submit
+              </Button>
+            </div>
           </form>
         </Form>
       </div>
-      <div className="h-3/4 w-full pl-4 md:w-5/12 md:border-l md:border-gray-300">
+      <div className="h-screen w-full pl-6 md:w-5/12 md:border-l md:border-gray-300">
         <div className="max-w-7xl rounded-md bg-black bg-[url('/test.jpg')]">
           <Image
             src="/test.jpg"

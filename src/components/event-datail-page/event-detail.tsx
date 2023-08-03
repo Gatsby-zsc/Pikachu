@@ -29,6 +29,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { useEffect } from "react";
 
 type EventDetailProps = {
   eventId: string;
@@ -37,11 +38,23 @@ type EventDetailProps = {
 export function EventDetail({ eventId }: EventDetailProps) {
   const router = useRouter();
   const fullPath = useFullPath();
+  const [allowBook, setAllowBook] = React.useState(true);
   const { data: session, status } = useSession();
   const { data, isLoading, isError, error } =
     api.eventRouter.getEventDetail.useQuery(eventId, {
       enabled: !!eventId,
     });
+
+  // check current time is before endTime
+  useEffect(() => {
+    if (data) {
+      const endDate = new Date(data.endTime);
+      const now = new Date();
+      if (endDate <= now) {
+        setAllowBook(false);
+      }
+    }
+  }, [data]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -54,7 +67,7 @@ export function EventDetail({ eventId }: EventDetailProps) {
   if (data === null) {
     return <div>No data available</div>;
   }
-
+  console.log(data);
   const startDate = new Date(data.startTime);
   const endDate = new Date(data.endTime);
   const eventStartDate = format(startDate, "EEEE, d MMMM", {
@@ -215,8 +228,9 @@ export function EventDetail({ eventId }: EventDetailProps) {
             <Button
               className="mt-4 w-full text-base"
               onClick={handleBookButton}
+              disabled={!allowBook}
             >
-              Get tickets
+              {allowBook ? "Get tickets" : "Tickets unavailable"}
             </Button>
           </div>
         </div>
