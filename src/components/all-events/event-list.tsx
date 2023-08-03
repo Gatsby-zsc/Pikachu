@@ -69,9 +69,9 @@ function EventsLists({ className, value, func }: EventListsProps) {
             defaultValue={value.sortDirection}
             value={value.sortDirection}
           >
-            <SelectTrigger className="h-8 w-32">
+            <SelectTrigger className="h-8 w-36">
               <ArrowUpDown className="h-5 w-5" />
-              <p className="font-semibold">Direct</p>
+              <p className="font-semibold">Direction</p>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="asc">Ascending</SelectItem>
