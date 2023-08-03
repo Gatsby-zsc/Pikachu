@@ -56,7 +56,7 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/settings">
+          <Link href="/dashboard/account-setting">
             <Settings className="mr-2 w-5" />
             Settings
           </Link>
