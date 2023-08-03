@@ -32,11 +32,7 @@ const Dashboard = () => {
   return (
     <div className="container mx-auto flex">
       {/* search bar to implement searching events by location */}
-      <SidebarFilter
-        className="flex-none"
-        value={filterList}
-        func={setFilterList}
-      />
+      <SidebarFilter className="mt-5" value={filterList} func={setFilterList} />
       <EventsLists className="flex-1" value={filterList} func={setFilterList} />
     </div>
   );

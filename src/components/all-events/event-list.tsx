@@ -46,34 +46,32 @@ function EventsLists({ className, value, func }: EventListsProps) {
   return (
     <div className={className}>
       <div className="mb-2 mt-5 flex justify-between pl-5">
-        <div id="sort-by-button">
-          <span className="text-lg">
-            <Select
-              onValueChange={changeSortKey}
-              defaultValue={value.sortKey}
-              value={value.sortKey}
-            >
-              <SelectTrigger className="w-[130px]">
-                <SlidersHorizontal />
-                <p className="text-lg font-semibold">Sort</p>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="0">none</SelectItem>
-                <SelectItem value="1">Date</SelectItem>
-                <SelectItem value="2">Location</SelectItem>
-              </SelectContent>
-            </Select>
-          </span>
+        <div>
+          <Select
+            onValueChange={changeSortKey}
+            defaultValue={value.sortKey}
+            value={value.sortKey}
+          >
+            <SelectTrigger className="h-8 w-32">
+              <SlidersHorizontal className="h-5 w-5" />
+              <p className="font-semibold">Sort by</p>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="0">none</SelectItem>
+              <SelectItem value="1">Date</SelectItem>
+              <SelectItem value="2">Location</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
-        <div id="sort-direction">
+        <div>
           <Select
             onValueChange={changeDirection}
             defaultValue={value.sortDirection}
             value={value.sortDirection}
           >
-            <SelectTrigger className="w-[130px]">
-              <ArrowUpDown />
-              <p className="pl-1 text-lg font-semibold">Direct</p>
+            <SelectTrigger className="h-8 w-32">
+              <ArrowUpDown className="h-5 w-5" />
+              <p className="font-semibold">Direct</p>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="asc">Ascending</SelectItem>
