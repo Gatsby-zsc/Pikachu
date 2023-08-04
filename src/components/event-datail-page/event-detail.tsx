@@ -9,6 +9,7 @@ import React from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import {
   EmailShareButton,
   EmailIcon,
@@ -67,7 +68,6 @@ export function EventDetail({ eventId }: EventDetailProps) {
   if (data === null) {
     return <div>No data available</div>;
   }
-  console.log(data);
   const startDate = new Date(data.startTime);
   const endDate = new Date(data.endTime);
   const eventStartDate = format(startDate, "EEEE, d MMMM", {
@@ -104,8 +104,18 @@ export function EventDetail({ eventId }: EventDetailProps) {
   return (
     <div className="container mx-auto mb-10 flex flex-col">
       <div className="grid justify-items-center pt-2">
-        <div className="max-w-7xl rounded-md bg-black bg-[url('/test.jpg')]">
-          <Image src="/test.jpg" width={700} height={400} alt="Image" />
+        <div className="w-[600px]">
+          {/* Limit the length-width ratio */}
+          <AspectRatio ratio={16 / 9}>
+            <Image
+              src={data.cover_image || "/test.jpg"}
+              alt="event image"
+              className="rounded-xl object-cover pt-1"
+              fill
+              sizes="100%"
+              priority={true}
+            />
+          </AspectRatio>
         </div>
       </div>
       <div className="pt-12">
@@ -219,6 +229,23 @@ export function EventDetail({ eventId }: EventDetailProps) {
             </div>
           </div>
           <div className="text-base text-slate-500">{data.description}</div>
+          <div>
+            {data.images.slice(1).map((img, index) => (
+              <div key={index} className="mx-auto my-2 w-3/4">
+                {/* Limit the length-width ratio */}
+                <AspectRatio ratio={16 / 9}>
+                  <Image
+                    src={img || "/test.jpg"}
+                    alt="event last images"
+                    className="rounded-xl object-cover pt-1"
+                    fill
+                    sizes="100%"
+                    priority={true}
+                  />
+                </AspectRatio>
+              </div>
+            ))}
+          </div>
         </div>
         <div className="w-full md:w-1/3">
           <div className="ml-4 mr-4 w-full rounded-lg border-2 border-slate-100 p-6">

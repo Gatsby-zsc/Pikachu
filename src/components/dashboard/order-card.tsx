@@ -20,7 +20,6 @@ export function OrderCard({ orderData }: OrderCardProps) {
   const router = useRouter();
   const { data: session, status } = useSession();
   const data = orderData;
-  console.log(data);
   const eventStartDate = format(
     new Date(data.event.startTime),
     "EEEE d MMMM yyyy",
@@ -46,24 +45,26 @@ export function OrderCard({ orderData }: OrderCardProps) {
   return (
     <div>
       <div
-        className="group mb-3 flex cursor-pointer rounded-md p-4 transition duration-200 hover:shadow-xl"
-        onClick={openOrderDetail}
+        className="group relative mb-3 flex cursor-pointer rounded-md py-4 pl-4 transition duration-200 hover:shadow-xl"
+        onClick={data.bookStatus ? openOrderDetail : undefined}
       >
-        <div className="ml-2 mr-6 w-16 text-lg font-semibold text-slate-500">
+        <div className="ml-6 mr-6 w-20 font-heading text-lg font-semibold text-slate-500">
           <div>{week}</div>
           <p className="text-sm">
             {month} {day}
           </p>
           <div>{year}</div>
         </div>
-        <div className="mr-6 w-1/3">
+        <div className="ml-2 mr-6 w-1/3">
+          {/* Limit the length-width ratio */}
           <AspectRatio ratio={16 / 9}>
             <Image
-              src="/test.jpg"
-              width={450}
-              height={400}
-              alt="Image"
-              className="rounded-xl"
+              src={data.event.cover_image || "/test.jpg"}
+              alt="event image"
+              className="mr-3 rounded-xl object-cover pt-1"
+              fill
+              sizes="100%"
+              priority={true}
             />
           </AspectRatio>
         </div>
@@ -74,6 +75,21 @@ export function OrderCard({ orderData }: OrderCardProps) {
             <div className="text-xs text-slate-400">Order No.{data.id}</div>
           </div>
         </div>
+        {!data.bookStatus && (
+          <div className="absolute right-0 flex h-full w-32 items-center">
+            {/* Limit the length-width ratio */}
+            <AspectRatio ratio={16 / 9}>
+              <Image
+                src={"/cancel.png"}
+                alt="image"
+                className="mr-3 rounded-xl object-cover pt-1"
+                fill
+                sizes="100%"
+                priority={true}
+              />
+            </AspectRatio>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -20,6 +20,7 @@ import { useSession } from "next-auth/react";
 import { Input } from "@/components/ui/input";
 import { Receipt, Armchair } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useRouter } from "next/router";
 import {
   SeatGraph,
@@ -78,15 +79,6 @@ export function BookDetail({ eventId }: EventDetailProps) {
       ...ticketCounts,
       [ticketId]: count,
     };
-    // if (count > 0) {
-    //   setIsTicketSelected(true);
-    // } else {
-    //   // Check if any other tickets are selected
-    //   const otherTicketsSelected = Object.values(ticketCounts).some(
-    //     (ticketCount) => ticketCount > 0
-    //   );
-    //   setIsTicketSelected(otherTicketsSelected);
-    // }
     setTicketCounts(updatedTicketCounts);
 
     const otherTicketsSelected = Object.values(updatedTicketCounts).some(
@@ -241,12 +233,9 @@ export function BookDetail({ eventId }: EventDetailProps) {
         seatsInfo: pickedSeatsInfo.positions,
       };
 
-      //todo sendBookedRequest emailAddress
-      //console.log("data", eventData)
-      // if (eventData)
-      //   sendBookedEmail.mutate({ email: data.emailAddress, ...eventData });
       submission.mutate(newData, {
         onSuccess: () => {
+          sendBookedEmail.mutate(eventId);
           void ctx.orderRouter.getAllSeats.invalidate();
           void router.push(`/all-events/${eventId}`);
           toast({
@@ -414,13 +403,19 @@ export function BookDetail({ eventId }: EventDetailProps) {
       </div>
       <div className="h-screen w-full pl-6 md:w-5/12 md:border-l md:border-gray-300">
         <div className="max-w-7xl rounded-md bg-black bg-[url('/test.jpg')]">
-          <Image
-            src="/test.jpg"
-            width={700}
-            height={400}
-            alt="Image"
-            className="rounded-lg"
-          />
+          <div className="mx-auto my-2 w-full">
+            {/* Limit the length-width ratio */}
+            <AspectRatio ratio={16 / 9}>
+              <Image
+                src={eventData.cover_image || "/test.jpg"}
+                alt="event last images"
+                className="rounded-xl object-cover pt-1"
+                fill
+                sizes="100%"
+                priority={true}
+              />
+            </AspectRatio>
+          </div>
         </div>
         <div className="my-2 flex justify-center text-2xl font-semibold">
           {eventData.title}

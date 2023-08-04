@@ -16,18 +16,19 @@ interface EventDetail {
   description: string;
   venue: string;
 }
-interface BookEmailProps {
+interface CancelEmailProps {
   eventData: EventDetail;
 }
 
-export const BookedEmail = ({ eventData }: BookEmailProps) => (
+export const CancelEmail = ({ eventData }: CancelEmailProps) => (
   <Html>
     <Head />
     <Body style={main}>
       <Container style={container}>
         <Img src="/test.jpg" width="212" height="88" alt="Plaid" style={logo} />
         <Text style={tertiary}>
-          Thank you, you successfully booked an event!
+          Thank you, you successfully cancelled an event, the fund will be
+          returned soon!
         </Text>
         <Section style={codeContainer}>
           <Text style={code}>{eventData.title}</Text>
@@ -41,8 +42,6 @@ export const BookedEmail = ({ eventData }: BookEmailProps) => (
     </Body>
   </Html>
 );
-
-export default BookedEmail;
 
 const main = {
   backgroundColor: "#ffffff",

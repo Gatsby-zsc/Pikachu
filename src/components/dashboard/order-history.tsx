@@ -8,7 +8,6 @@ export const OrderHistory = () => {
     return null;
   }
   const { data: orders } = api.orderRouter.getAllorders.useQuery();
-  console.log(orders);
   if (!orders) {
     return null;
   }

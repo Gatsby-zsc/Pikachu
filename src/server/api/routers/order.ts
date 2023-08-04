@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
-import { Code } from "lucide-react";
 
 export const orderRouter = createTRPCRouter({
   getAllSeats: protectedProcedure
@@ -50,6 +49,11 @@ export const orderRouter = createTRPCRouter({
           include: {
             ticket: true,
           },
+        },
+      },
+      orderBy: {
+        event: {
+          startTime: "desc",
         },
       },
     });
