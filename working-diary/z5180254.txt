@@ -10,6 +10,30 @@ Week 3
 
 Drew all interface and flow diagrams for the projects. Completed proposal assignmnet writing with team members.
 
-Week4 
+Week 4 
 
 Drew the phototype for the group on Figma. Studied with typescript and project framework(Next.js) 
+
+Week 5
+
+Disscussed project structure and functionaties with group members.
+
+Week 6
+
+Developing the event reviews.
+
+Week 7
+
+Start to write the final report and do some UI/UX improvement.
+
+Week 8
+
+Fix bugs of code reviews and improve the user experience.
+
+Week 9
+
+Go through all the functionalities and fix bugs.
+
+Week 10
+
+Prepare for the final presentation and report.
