@@ -96,7 +96,7 @@ function SidebarFilter({ className, value, func }: SidebarFilterProps) {
         </div>
       </div>
       <div className="mb-6">
-        <div className="mb-4 flex items-center space-x-2 font-heading text-xl font-bold">
+        <div className="mb-2 flex items-center space-x-2 font-heading text-xl font-bold">
           <CalendarDays />
           <div>Date</div>
           <Button variant="ghost" onClick={restoreDate}>
@@ -129,7 +129,7 @@ function SidebarFilter({ className, value, func }: SidebarFilterProps) {
           onOpenChange={setIsOpenCategory}
           className="w-[350px]"
         >
-          <div className="mb-4 flex items-center space-x-2 font-heading text-xl font-bold">
+          <div className="mb-2 flex items-center space-x-2 font-heading text-xl font-bold">
             <LayoutDashboard />
             <div>Category</div>
             <Button variant="ghost" onClick={restoreCategory}>
@@ -140,12 +140,11 @@ function SidebarFilter({ className, value, func }: SidebarFilterProps) {
             defaultValue={value.Category}
             value={value.Category}
             onValueChange={changeCategory}
-            className="space-y-2"
           >
             {eventCategories.map(
               (category, index) =>
                 index < 3 && (
-                  <div key={index} className="flex items-center space-x-2">
+                  <div key={index} className="space-x-2 space-y-1">
                     <RadioGroupItem value={category} id={category} />
                     <Label htmlFor={category}> {category} </Label>
                   </div>
@@ -155,7 +154,7 @@ function SidebarFilter({ className, value, func }: SidebarFilterProps) {
               {eventCategories.map(
                 (category, index) =>
                   index >= 3 && (
-                    <div key={index} className="flex items-center space-x-2">
+                    <div key={index} className="space-x-2">
                       <RadioGroupItem value={category} id={category} />
                       <Label htmlFor={category}> {category} </Label>
                     </div>
@@ -176,24 +175,22 @@ function SidebarFilter({ className, value, func }: SidebarFilterProps) {
           onOpenChange={setIsOpenType}
           className="w-[350px]"
         >
-          <div className="mb-4 flex items-center space-x-2 font-heading text-xl font-bold">
+          <div className="mb-2 flex items-center space-x-2 font-heading text-xl font-bold">
             <SlidersHorizontal />
             <div>Type</div>
             <Button variant="ghost" onClick={restoreType}>
               Reset
             </Button>
           </div>
-
           <RadioGroup
             defaultValue={value.Type}
             value={value.Type}
             onValueChange={changeType}
-            className="space-y-2"
           >
             {eventTypes.map(
               (type, index) =>
                 index < 3 && (
-                  <div key={index} className="flex items-center space-x-2">
+                  <div key={index} className="space-x-2 space-y-1">
                     <RadioGroupItem value={type} id={type} />
                     <Label htmlFor={type}> {type} </Label>
                   </div>
@@ -203,7 +200,7 @@ function SidebarFilter({ className, value, func }: SidebarFilterProps) {
               {eventTypes.map(
                 (type, index) =>
                   index >= 3 && (
-                    <div key={index} className="flex items-center space-x-2">
+                    <div key={index} className="space-x-2 space-y-1">
                       <RadioGroupItem value={type} id={type} />
                       <Label htmlFor={type}> {type} </Label>
                     </div>

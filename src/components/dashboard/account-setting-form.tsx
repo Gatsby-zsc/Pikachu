@@ -60,22 +60,12 @@ const FormSchema = z.object({
     .refine((cardNum) => /^\d+$/.test(cardNum), {
       message: "The card number should only contain digits",
     }),
-  expiryDate: z
-    .string()
-    .refine((cardNum) => cardNum.length === 4, {
-      message: "The card number should be exactly 16 numbers",
-    })
-    .refine((cardNum) => /^\d+$/.test(cardNum), {
-      message: "The card number should only contain digits",
-    }),
-  cardCVC: z
-    .string()
-    .refine((cardCVC) => cardCVC.length === 3, {
-      message: "The card number should be exactly 16 numbers",
-    })
-    .refine((cardCVC) => /^\d+$/.test(cardCVC), {
-      message: "The card number should only contain digits",
-    }),
+  expiryDate: z.string().refine((cardNum) => cardNum.length === 5, {
+    message: "Error format",
+  }),
+  cardCVC: z.string().refine((cardCVC) => cardCVC.length === 3, {
+    message: "Error format",
+  }),
   cardHoldName: z.string().min(2, {
     message: "The hold name of card should be at least 2 characters",
   }),

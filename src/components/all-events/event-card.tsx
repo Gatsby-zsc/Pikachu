@@ -120,7 +120,7 @@ function EventCard({ props }: EventCardProps) {
       <div className="mb-3 flex items-end">
         {favourite ? (
           <Button variant="ghost" onClick={addFavorite}>
-            <HeartOff />
+            <Heart className="text-red-500" />
           </Button>
         ) : (
           <Button
