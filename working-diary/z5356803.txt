@@ -17,3 +17,26 @@ and development documentation with other members. Make familiar with the prisma 
 Week 4
 
 According to the ER diagram, use prisma to create our database.
+
+Week 5
+
+Create the eventDetail page, redefine the database structure. Create the trpc api to get event details.
+
+Week 6
+
+Create the bookDetail page, redefine the database structure. Create the trpc api to get ticket details. Learn to use
+jotai to manage the statement.
+
+Week 7
+Restruct the database, add the function of pickseats, connect the seatMap to tickets.
+
+Week 8
+
+Create the TicketHistory page, redefine the database. Create the trpc api to get user's order details. Define the interface of the
+order cards.
+
+Week 9
+Implement the function of cancel button and recode the sendemail api. Debug for all the code. Do case test for every user story.
+
+Week 10
+Accomplish the report and other relative files.
