@@ -1,1 +1,39 @@
 Week 1
+
+Participated in the project topic selection, discussion, preview of the upcoming requirements of the technology stack, next.js, tRPC, prisma, etc.
+
+Week 2
+
+Having decided on the title of the project, move on to the technical documentation.
+
+Week 3
+
+I participated in filling out the proposal report, clarified the tasks of the subsequent stage, and prepared for the first stage of the sprint.
+
+Week 4
+
+During this week, I started the initial setup of the project. This included setting up the development environment, installing necessary libraries and packages, and creating the basic structure of the project. I also started to familiarize myself with the technologies we decided to use, such as next.js, tRPC, and Prisma.
+
+Week 5
+
+This week was focused on designing the database schema and setting up the Prisma ORM. I worked on creating the necessary tables and relationships for our event management system. I also started to implement basic CRUD operations for the events.
+
+Week 6
+
+I started to work on the front-end part of the project. I set up Next.js and started to create the basic layout and components for our application. I also integrated tRPC to handle the communication between the front-end and the back-end.
+
+Week 7
+
+This week was focused on implementing the main features of our event management system. I worked on the event creation, update, and deletion functionalities. I also started to work on the user registration and authentication system.
+
+Week 8
+
+I continued to work on the user system. I implemented the user login, logout, and profile update functionalities. I also started to work on the event booking system, allowing users to book events.
+
+Week 9
+
+This week was focused on testing and debugging. I wrote unit tests for our functions and components, and performed manual testing to ensure everything works as expected. I also fixed any bugs that were found during the testing process.
+
+Week 10
+
+In the final week, I completed the email sending functionalities, added the final report project, and fixed the sending of update email after editing events. I also worked on finalizing the user interface, improving the overall user experience, and deploying our application.
