@@ -30,4 +30,4 @@ Designed some simple badges for badge system so that each host can earn badges o
 they host.
 
 week 10
-Modified landing page so that user can view more info when they get to the website. Finished final report.
+Modified landing page so that user can view more info when they get to the website. Finished final report
