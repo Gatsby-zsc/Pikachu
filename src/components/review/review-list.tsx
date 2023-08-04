@@ -27,14 +27,6 @@ export const ReviewList = (props: eventIdProps) => {
     props.eventId
   );
 
-  const [isHidden, setHidden] = useState(true);
-
-  useEffect(() => {
-    if (!event) {
-      setHidden(false);
-    }
-  }, [event]);
-
   const [open, setOpen] = useState(false);
   const ctx = api.useContext();
   const updateHostResponse = api.reviewRouter.updateHostResponse.useMutation({
@@ -111,7 +103,7 @@ export const ReviewList = (props: eventIdProps) => {
             <div className="w-full">
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                  {!isHidden && !review.hostResponse && event && (
+                  {!review.hostResponse && event && (
                     <Button variant="outline" className="ml-auto block px-2">
                       Reply
                     </Button>

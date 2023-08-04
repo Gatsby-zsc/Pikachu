@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "@/server/api/trpc";
 
 export const reviewRouter = createTRPCRouter({
   create: protectedProcedure
@@ -23,13 +27,17 @@ export const reviewRouter = createTRPCRouter({
 
       return review;
     }),
-  checkReviewVaild: protectedProcedure
+  checkReviewVaild: publicProcedure
     .input(
       z.object({
         eventId: z.string(),
       })
     )
     .query(async ({ input, ctx }) => {
+      if (!ctx.session) {
+        return false;
+      }
+
       const order = await ctx.prisma.order.findMany({
         where: {
           userId: ctx.session.user.id,
@@ -38,7 +46,7 @@ export const reviewRouter = createTRPCRouter({
       });
       return order;
     }),
-  getReviews: protectedProcedure
+  getReviews: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
       const review = await ctx.prisma.review.findMany({
@@ -55,9 +63,11 @@ export const reviewRouter = createTRPCRouter({
       });
       return review;
     }),
-  checkReplyValid: protectedProcedure
+  checkReplyValid: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
+      if (!ctx.session) return false;
+
       const event = await ctx.prisma.event.findUnique({
         where: {
           id: input,
@@ -68,7 +78,7 @@ export const reviewRouter = createTRPCRouter({
       const isvaild = !!event;
       return isvaild;
     }),
-  updateHostResponse: protectedProcedure
+  updateHostResponse: publicProcedure
     .input(
       z.object({
         id: z.string(),
