@@ -69,13 +69,13 @@ model User {
     shippingAddress     String?              @map("shipping_address")
     billingPostcode     String?
     shippingPostcode    String?
+    points              Int                  @default(0)
     registrationDate    DateTime             @default(now()) @map("registration_date")
     accounts            Account[]
     sessions            Session[]
     events              Event[]
     userFavouriteEvents UserFavouriteEvent[]
     notifications       Notification[]
-    userPoint           UserPoint?
     reviews             Review[]
 
     @@map(name: "user")
@@ -135,15 +135,6 @@ model Notification {
     user     User     @relation(fields: [userId], references: [id])
 
     @@map(name: "notification")
-}
-
-model UserPoint {
-    id     Int    @id @default(autoincrement())
-    userId String @unique @map("user_id") @db.Uuid
-    points Int
-    user   User   @relation(fields: [userId], references: [id])
-
-    @@map(name: "user_point")
 }
 
 model Badge {

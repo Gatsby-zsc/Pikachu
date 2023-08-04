@@ -333,15 +333,7 @@ export const eventRouter = createTRPCRouter({
               remaining: true,
             },
           },
-          user: {
-            include: {
-              userPoint: {
-                select: {
-                  points: true,
-                },
-              },
-            },
-          },
+          user: {},
           orders: {
             select: {
               email: true,

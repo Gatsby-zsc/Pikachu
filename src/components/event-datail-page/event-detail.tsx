@@ -35,6 +35,7 @@ import { ReviewForm } from "@/components/review/review-form";
 import { ReviewList } from "@/components/review/review-list";
 import { Separator } from "@/components/ui/separator";
 import { DisplayStarRating } from "@/components/review/display-star-rating";
+import { FirstBadge, SecondBadge, ThirdBadge } from "@/components/badges";
 
 type EventDetailProps = {
   eventId: string;
@@ -72,6 +73,7 @@ export function EventDetail({ eventId }: EventDetailProps) {
   if (data === null) {
     return <div>No data available</div>;
   }
+
   const startDate = new Date(data.startTime);
   const endDate = new Date(data.endTime);
   const eventStartDate = format(startDate, "EEEE, d MMMM", {
@@ -138,8 +140,8 @@ export function EventDetail({ eventId }: EventDetailProps) {
         <div className="w-full md:w-2/3">
           <div className="mb-4 text-5xl font-extrabold">{data.title}</div>
           <div className="mb-4 text-base text-slate-400">
-            <p>
-              By{" "}
+            <div className="flex h-8">
+              <div className="mr-1">By </div>
               <HoverCard>
                 <HoverCardTrigger asChild>
                   <span className="font-semibold text-slate-600 hover:underline">
@@ -174,7 +176,23 @@ export function EventDetail({ eventId }: EventDetailProps) {
                   </div>
                 </HoverCardContent>
               </HoverCard>
-            </p>
+              <div className="pl-5">
+                {data.user.points <= 1 ? (
+                  <FirstBadge className="mr-2 h-5 w-12" />
+                ) : data.user.points <= 10 ? (
+                  <>
+                    <FirstBadge className="mr-2 h-5 w-12" />
+                    <SecondBadge className="mr-2 h-5 w-12" />
+                  </>
+                ) : (
+                  <>
+                    <FirstBadge className="mr-2 h-5 w-12" />
+                    <SecondBadge className="mr-2 h-5 w-12" />
+                    <ThirdBadge className="mr-2 h-5 w-12" />
+                  </>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Social media icons */}

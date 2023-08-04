@@ -116,8 +116,27 @@ export const orderRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      // Update seats
+      const hostId = await ctx.prisma.event.findFirst({
+        select: {
+          createdUser: true,
+        },
+        where: {
+          id: input.eventId,
+        },
+      });
 
+      await ctx.prisma.user.update({
+        where: {
+          id: hostId?.createdUser,
+        },
+        data: {
+          points: {
+            increment: 50,
+          },
+        },
+      });
+
+      // Update seats
       const orderCreatePromise = await ctx.prisma.order.create({
         data: {
           name: input.name,
