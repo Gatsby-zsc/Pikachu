@@ -8,6 +8,15 @@ This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
 
+## How to run the project
+
+```
+docker compose build
+docker compose up
+```
+
+Then it will show that it's listening to the port 3000.
+
 ## How to begin with the project
 
 1. run `npm install`
