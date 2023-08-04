@@ -17,6 +17,14 @@ docker compose up
 
 Then it will show that it's listening to the port 3000.
 
+Then we can open http://localhost:3000/ on the browser.
+
+![docker-compose](./doc-image/docker-compose-build.png)
+
+![docker-compose](./doc-image/docker-compose-up.png)
+
+![docker-compose](./doc-image/listen-3000.png)
+
 ## How to begin with the project
 
 1. run `npm install`
