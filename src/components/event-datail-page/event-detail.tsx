@@ -177,7 +177,7 @@ export function EventDetail({ eventId }: EventDetailProps) {
                 </HoverCardContent>
               </HoverCard>
               <div className="pl-5">
-                {data.user.points <= 1 ? (
+                {data.user.points === 0 ? (
                   <FirstBadge className="mr-2 h-5 w-12" />
                 ) : data.user.points <= 10 ? (
                   <>
