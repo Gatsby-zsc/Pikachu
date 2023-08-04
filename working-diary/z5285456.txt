@@ -13,4 +13,37 @@ Week 3
 
 Finished the proposal together and submitted it. Discussed the details of the project features 
 and development documentation with other members. 
-to be continued...
+
+Week 4
+
+Began working on the frontend and backend of the application. 
+Established the database schema and started integrating the necessary APIs.
+
+Week 5
+
+Continued developing the core functionalities like event creation and event booking, 
+focusing on the user interface (UI) and user experience (UX) design.
+
+Week 6
+
+Do code review and fix bugs.
+
+Week 7
+
+Discuss the event details UI and do some code refactoring.
+Do code review and fix bugs.
+
+Week 8
+
+Discuss the image uploading solution and developing it.
+Do code review and fix bugs.
+
+Week 9
+
+Do code review and fix bugs. Test all the functionalities of the application.
+
+Week 10
+
+Reconsider the seat selection solution and developing it.
+Prepare the final presentation and report.
+Develop the docker deploy solution.
