@@ -1,5 +1,5 @@
 week 1
-Discussed and created user stories with other members, decide to implement project using T3 stack, a full-stack development framework
+Discussed and created user stories with other members, decided to implement project using T3 stack, a full-stack development framework
 
 week 2
 Designed database schemas according to reference website and user story. Modified user story after discussing with other members
@@ -12,3 +12,22 @@ Discussed and modified database design with other members, getting familiar with
 
 week 5
 Implemented backend api for sprint 1 according to user story and database, getting familiar with frontend framework(tailwindcss/shadcn)
+
+week 6
+Implemented backend api for sprint 2, to retrieve all events information after successfully create event. And define a set of options for the api input
+so that the server can do some extra processing on the return results such as filtering and sorting
+
+week 7
+Implemented front end for all-events page, where user can view some brief info of all up-coming events and redirect to the event detail page when they 
+click the event card
+
+week 8 
+Improved all-events page detail after retrospective to get a better UI/UX. Improved corresponding api by adding more 
+options (i.e user can also sort the returning result in ascending or descending direction)
+
+week 9
+Designed some simple badges for badge system so that each host can earn badges once they receive certain amount of order or review from each event 
+they host.
+
+week 10
+Modified landing page so that user can view more info when they get to the website. Finished final report.
