@@ -72,7 +72,13 @@ const FormSchema = z.object({
 });
 
 export const AccountSettingForm = ({ user }: AccountSettingFormProps) => {
-  const updateUserInfor = api.userRouter.updateUser.useMutation();
+  const updateUserInfor = api.userRouter.updateUser.useMutation({
+    onSuccess: () => {
+      toast({
+        title: "User Information Updated.",
+      });
+    },
+  });
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -104,15 +110,6 @@ export const AccountSettingForm = ({ user }: AccountSettingFormProps) => {
       cardCVC: data.cardCVC,
       cardHoldName: data.cardHoldName,
     };
-
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(newData, null, 2)}</code>
-        </pre>
-      ),
-    });
 
     updateUserInfor.mutate(newData);
   }
