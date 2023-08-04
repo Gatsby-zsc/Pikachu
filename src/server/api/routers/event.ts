@@ -174,9 +174,10 @@ export const eventRouter = createTRPCRouter({
           events = events.sort(compareVenue);
         }
       }
-
-      if (input.sortDirection !== "asc") {
-        events = events.reverse();
+      if (input.sortKey !== "0") {
+        if (input.sortDirection !== "asc") {
+          events = events.reverse();
+        }
       }
 
       return events;
@@ -307,8 +308,10 @@ export const eventRouter = createTRPCRouter({
         }
       }
 
-      if (input.sortDirection !== "asc") {
-        events = events.reverse();
+      if (input.sortKey !== "0") {
+        if (input.sortDirection !== "asc") {
+          events = events.reverse();
+        }
       }
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
