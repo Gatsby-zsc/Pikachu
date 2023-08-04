@@ -89,7 +89,7 @@ function SidebarFilter({ className, value, func }: SidebarFilterProps) {
               <Label htmlFor="events-followed">Only show events I follow</Label>
             </div>
           )}
-          <div className="flex items-center space-x-2">
+          <div className="invisible flex items-center space-x-2">
             <Checkbox onCheckedChange={filterOnline} id="online-events" />
             <Label htmlFor="online-events">Search for online events</Label>
           </div>
