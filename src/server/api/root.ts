@@ -6,6 +6,7 @@ import { ticketRouter } from "@/server/api/routers/ticket";
 import { favouriteRouterRouter } from "@/server/api/routers/favourite-events";
 import { userRouter } from "@/server/api/routers/user";
 import { orderRouter } from "./routers/order";
+import { reviewRouter } from "./routers/review";
 
 /**
  * This is the primary router for your server.
@@ -20,6 +21,7 @@ export const appRouter = createTRPCRouter({
   favouriteRouter: favouriteRouterRouter,
   userRouter: userRouter,
   orderRouter: orderRouter,
+  reviewRouter: reviewRouter,
 });
 
 // export type definition of API

@@ -31,6 +31,10 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { useEffect } from "react";
+import { ReviewForm } from "@/components/review/review-form";
+import { ReviewList } from "@/components/review/review-list";
+import { Separator } from "@/components/ui/separator";
+import { DisplayStarRating } from "@/components/review/display-star-rating";
 
 type EventDetailProps = {
   eventId: string;
@@ -45,7 +49,7 @@ export function EventDetail({ eventId }: EventDetailProps) {
     api.eventRouter.getEventDetail.useQuery(eventId, {
       enabled: !!eventId,
     });
-
+  const { data: reviews } = api.reviewRouter.getReviews.useQuery(eventId);
   // check current time is before endTime
   useEffect(() => {
     if (data) {
@@ -91,6 +95,13 @@ export function EventDetail({ eventId }: EventDetailProps) {
   const prices = data.tickets.map((ticket) => ticket.price);
 
   const priceContent = formatPriceRange(prices);
+
+  if (!reviews) {
+    return <div>Loading....</div>;
+  }
+  const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+  const avgRating = totalRating / reviews.length;
+  console.log(avgRating);
 
   const handleBookButton = () => {
     if (status === "unauthenticated") {
@@ -188,7 +199,7 @@ export function EventDetail({ eventId }: EventDetailProps) {
             </TwitterShareButton>
           </div>
 
-          <div className="mb-3 text-2xl font-bold">When and Whered</div>
+          <div className="mb-3 text-2xl font-bold">When and Where</div>
           <div className="mb-4 flex flex-col md:flex-row md:space-x-4">
             <div className="flex w-full flex-row items-start p-4 md:w-1/2 md:border-r md:border-gray-300">
               <CalendarIcon className="mr-4 h-6 w-6 opacity-50" />
@@ -228,6 +239,21 @@ export function EventDetail({ eventId }: EventDetailProps) {
               </div>
             </div>
           </div>
+          <div className="mb-3 text-2xl font-bold">Reviews</div>
+          <div className="mb-4 flex items-center space-x-2 text-sm text-slate-400">
+            <DisplayStarRating rating={avgRating} />
+            <div className=" text-base font-semibold text-slate-600">
+              {!Number.isNaN(avgRating)
+                ? avgRating.toFixed(1)
+                : "Book a ticket. Be the first to review this event."}
+            </div>
+          </div>
+          <ReviewForm eventId={eventId} startDate={startDate} />
+          <Separator className="my-12" />
+
+          <ReviewList eventId={eventId} />
+          <Separator className="my-12" />
+
           <div className="text-base text-slate-500">{data.description}</div>
           <div>
             {data.images.slice(1).map((img, index) => (

@@ -59,6 +59,7 @@
     "react-google-autocomplete": "^2.7.3",
     "react-google-places-autocomplete": "^4.0.1",
     "react-hook-form": "^7.45.0",
+    "react-simple-star-rating": "^5.1.7",
     "react-share": "^4.4.1",
     "resend": "^0.15.3",
     "superjson": "1.12.2",

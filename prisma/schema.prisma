@@ -234,6 +234,7 @@ model Review {
     userId        String   @map("user_id") @db.Uuid
     reviewDate    DateTime @default(now()) @map("review_date")
     reviewContent String   @map("review_content")
+    rating        Int
     hostResponse  String?  @map("host_response")
     event         Event    @relation(fields: [eventId], references: [id])
     user          User     @relation(fields: [userId], references: [id])
