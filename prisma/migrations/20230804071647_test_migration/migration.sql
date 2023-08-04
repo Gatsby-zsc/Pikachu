@@ -52,6 +52,7 @@ CREATE TABLE "user" (
     "shipping_address" TEXT,
     "billingPostcode" TEXT,
     "shippingPostcode" TEXT,
+    "points" INTEGER NOT NULL DEFAULT 0,
     "registration_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "user_pkey" PRIMARY KEY ("id")
@@ -108,15 +109,6 @@ CREATE TABLE "notification" (
 );
 
 -- CreateTable
-CREATE TABLE "user_point" (
-    "id" SERIAL NOT NULL,
-    "user_id" UUID NOT NULL,
-    "points" INTEGER NOT NULL,
-
-    CONSTRAINT "user_point_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "badget" (
     "id" SERIAL NOT NULL,
     "user_id" UUID NOT NULL,
@@ -150,7 +142,6 @@ CREATE TABLE "order" (
     "expiry_date" TEXT NOT NULL,
     "card_cvv" TEXT NOT NULL,
     "bill" DOUBLE PRECISION NOT NULL,
-    "ticket_info" JSONB NOT NULL,
     "book_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "book_status" BOOLEAN NOT NULL DEFAULT false,
     "cancellation_date" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
@@ -163,6 +154,7 @@ CREATE TABLE "order_ticket" (
     "id" SERIAL NOT NULL,
     "order_id" UUID NOT NULL,
     "ticket_id" INTEGER NOT NULL,
+    "ticket_number" INTEGER NOT NULL,
 
     CONSTRAINT "order_ticket_pkey" PRIMARY KEY ("id")
 );
@@ -181,26 +173,28 @@ CREATE TABLE "ticket" (
 );
 
 -- CreateTable
-CREATE TABLE "review" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "event_id" UUID NOT NULL,
-    "user_id" UUID NOT NULL,
-    "review_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "review_content" TEXT NOT NULL,
-    "host_response" TEXT,
-
-    CONSTRAINT "review_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "seat" (
     "id" SERIAL NOT NULL,
     "event_id" UUID NOT NULL,
     "row" INTEGER NOT NULL,
     "col" INTEGER NOT NULL,
     "status" TEXT NOT NULL,
+    "order_id" UUID,
 
     CONSTRAINT "seat_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "review" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "event_id" UUID NOT NULL,
+    "user_id" UUID NOT NULL,
+    "review_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "review_content" TEXT NOT NULL,
+    "rating" INTEGER NOT NULL,
+    "host_response" TEXT,
+
+    CONSTRAINT "review_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -219,10 +213,10 @@ CREATE UNIQUE INDEX "verification_token_token_key" ON "verification_token"("toke
 CREATE UNIQUE INDEX "verification_token_identifier_token_key" ON "verification_token"("identifier", "token");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "user_point_user_id_key" ON "user_point"("user_id");
+CREATE UNIQUE INDEX "badget_type_id_key" ON "badget"("type_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "badget_type_id_key" ON "badget"("type_id");
+CREATE UNIQUE INDEX "seat_event_id_row_col_key" ON "seat"("event_id", "row", "col");
 
 -- AddForeignKey
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -237,13 +231,10 @@ ALTER TABLE "event" ADD CONSTRAINT "event_created_user_fkey" FOREIGN KEY ("creat
 ALTER TABLE "user_favourite_event" ADD CONSTRAINT "user_favourite_event_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "user_favourite_event" ADD CONSTRAINT "user_favourite_event_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "event"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "user_favourite_event" ADD CONSTRAINT "user_favourite_event_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "event"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "notification" ADD CONSTRAINT "notification_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "user_point" ADD CONSTRAINT "user_point_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "badget" ADD CONSTRAINT "badget_type_id_fkey" FOREIGN KEY ("type_id") REFERENCES "badge_type"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -252,7 +243,7 @@ ALTER TABLE "badget" ADD CONSTRAINT "badget_type_id_fkey" FOREIGN KEY ("type_id"
 ALTER TABLE "order" ADD CONSTRAINT "order_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "event"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "order_ticket" ADD CONSTRAINT "order_ticket_order_id_fkey" FOREIGN KEY ("order_id") REFERENCES "order"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "order_ticket" ADD CONSTRAINT "order_ticket_order_id_fkey" FOREIGN KEY ("order_id") REFERENCES "order"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "order_ticket" ADD CONSTRAINT "order_ticket_ticket_id_fkey" FOREIGN KEY ("ticket_id") REFERENCES "ticket"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -261,10 +252,13 @@ ALTER TABLE "order_ticket" ADD CONSTRAINT "order_ticket_ticket_id_fkey" FOREIGN 
 ALTER TABLE "ticket" ADD CONSTRAINT "ticket_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "event"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "seat" ADD CONSTRAINT "seat_order_id_fkey" FOREIGN KEY ("order_id") REFERENCES "order"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "seat" ADD CONSTRAINT "seat_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "event"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "review" ADD CONSTRAINT "review_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "event"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "review" ADD CONSTRAINT "review_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "seat" ADD CONSTRAINT "seat_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "event"("id") ON DELETE CASCADE ON UPDATE CASCADE;
