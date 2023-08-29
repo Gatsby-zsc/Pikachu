@@ -8,6 +8,10 @@ This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
 
+## Important Notes
+
+The environment secrets are temporary for course assignment, not used for production purposes, and are invalidated at any time if abused.
+
 ## How to run the project
 
 ```
